@@ -142,13 +142,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AutoClickerGL.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="YAMLFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Config.yml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FileUtil.hpp" />
+    <ClInclude Include="Array.hpp" />
+    <ClInclude Include="AutoClickerGL.h" />
+    <ClInclude Include="YAMLFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

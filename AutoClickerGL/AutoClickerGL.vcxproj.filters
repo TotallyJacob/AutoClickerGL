@@ -16,10 +16,37 @@
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{c487398e-6b4e-473c-bd37-a9ac1fe6f036}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{ceba1783-d7c7-45c3-a88a-e480a253d8cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\core">
+      <UniqueIdentifier>{59eae237-6757-40d6-931a-719d2217ce82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\core">
+      <UniqueIdentifier>{0c1cb089-ebf7-4d0a-a606-fb7910040b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util\files">
+      <UniqueIdentifier>{a88c03d8-4941-4096-997e-d5873ba8f00d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util\files">
+      <UniqueIdentifier>{a193dcde-9d6e-4c22-819f-e6b0b2f91df9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine">
+      <UniqueIdentifier>{157a12cd-c037-4d6e-a30d-47b8cd4c901c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine">
+      <UniqueIdentifier>{1942e309-d365-462a-a268-3f2c278e00e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoClickerGL.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="YAMLFile.cpp">
+      <Filter>Source Files\util\files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -28,8 +55,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FileUtil.hpp">
-      <Filter>Header Files\util</Filter>
+    <ClInclude Include="AutoClickerGL.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="YAMLFile.h">
+      <Filter>Header Files\util\files</Filter>
+    </ClInclude>
+    <ClInclude Include="Array.hpp">
+      <Filter>Header Files\util\files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

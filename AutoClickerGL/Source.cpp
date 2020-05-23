@@ -1,6 +1,11 @@
 #include<iostream>
 
-int main() {
+#include"AutoClickerGL.h"
 
-	return 0;
+int main() {
+	AutoClickerGL autoClicker;
+
+	system("pause");
+
+	return autoClicker.end();
 }

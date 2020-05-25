@@ -1,6 +1,7 @@
 //Standard imports
 #include<iostream>
 #include<fstream>
+#include<vector>
 
 #define FILE_CONSTEXPR
 
@@ -17,10 +18,20 @@ namespace util::file {
 			char* dataPointer;
 		};
 
+		template<typename T>
+		struct YAMLNode {
+			const char* key;
+			T value;
+		};
+
 		YAMLFileData fileData;
 
 		FILE_CONSTEXPR void readFile(const char *fileName, YAMLFileData &fileData);
 		FILE_CONSTEXPR void parseData(YAMLFileData &fileData);
+
+		static inline void getType(char* chars, unsigned int num_chars) {
+
+		}
 
 	public:
 
@@ -32,6 +43,7 @@ namespace util::file {
 		FILE_CONSTEXPR T get(const char* name) const {
 
 		}
+
 	};
 
 };

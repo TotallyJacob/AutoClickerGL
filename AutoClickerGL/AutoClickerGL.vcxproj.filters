@@ -37,6 +37,12 @@
     <Filter Include="Source Files\engine">
       <UniqueIdentifier>{1942e309-d365-462a-a268-3f2c278e00e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\engine\gui">
+      <UniqueIdentifier>{e6c24922-9ce5-4893-958a-d28d8b1d59fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\gui">
+      <UniqueIdentifier>{11d790c7-cf31-46df-9f82-57968da5dd56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -47,6 +53,12 @@
     </ClCompile>
     <ClCompile Include="YAMLFile.cpp">
       <Filter>Source Files\util\files</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiRenderer.cpp">
+      <Filter>Source Files\engine\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiManager.cpp">
+      <Filter>Source Files\engine\gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,8 +73,11 @@
     <ClInclude Include="YAMLFile.h">
       <Filter>Header Files\util\files</Filter>
     </ClInclude>
-    <ClInclude Include="Array.hpp">
-      <Filter>Header Files\util\files</Filter>
+    <ClInclude Include="GuiRenderer.h">
+      <Filter>Header Files\engine\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiManager.h">
+      <Filter>Header Files\engine\gui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -22,22 +22,37 @@ void YAMLFile::readFile(const char *fileName, YAMLFileData &fileData) {
 	fileData.fileLength = file.tellg();
 	file.seekg(0, std::ios::beg);
 
-	std::cout << fileData.fileLength << std::endl;
-
 	fileData.dataPointer = new char[fileData.fileLength];
 
 	raw_buffer->sgetn(fileData.dataPointer, fileData.fileLength);
 
 	file.close();
 }
-void YAMLFile::parseData(YAMLFileData &fileData) {
 
-	for (int index = 0; index < fileData.fileLength; index++) {
-	
-		std::cout << fileData.dataPointer[index];
-	
+/*
+
+@TODO un-hard coded line restriction size
+
+*/
+void YAMLFile::parseData(YAMLFileData &fileData) {
+	std::string line = "";
+	//char line[64];
+
+	for (unsigned int index = 0; index < fileData.fileLength; index++) {
+		
+		if (fileData.dataPointer[index] == '\n') {
+			line.clear();
+			continue;
+		}
+
+		if (fileData.dataPointer[index] == ':') {
+			std::cout << line << std::endl;
+		}
+
+
+		line.push_back(fileData.dataPointer[index]);
 	}
 
-	std::cout << "end" << std::endl;
+	line.clear();
 
 }

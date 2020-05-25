@@ -1,4 +1,4 @@
 #App things
-app-name: "AutoClickerGL"
-app-win-width: 1280
-app-win-height: 720
+app-name:"AutoClickerGL"
+app-win-width:1280f
+app-win-height:720f

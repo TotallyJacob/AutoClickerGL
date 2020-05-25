@@ -13,23 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\util">
-      <UniqueIdentifier>{c487398e-6b4e-473c-bd37-a9ac1fe6f036}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\util">
-      <UniqueIdentifier>{ceba1783-d7c7-45c3-a88a-e480a253d8cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\core">
       <UniqueIdentifier>{59eae237-6757-40d6-931a-719d2217ce82}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\core">
       <UniqueIdentifier>{0c1cb089-ebf7-4d0a-a606-fb7910040b4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\util\files">
-      <UniqueIdentifier>{a88c03d8-4941-4096-997e-d5873ba8f00d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\util\files">
-      <UniqueIdentifier>{a193dcde-9d6e-4c22-819f-e6b0b2f91df9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\engine">
       <UniqueIdentifier>{157a12cd-c037-4d6e-a30d-47b8cd4c901c}</UniqueIdentifier>
@@ -43,6 +31,33 @@
     <Filter Include="Source Files\engine\gui">
       <UniqueIdentifier>{11d790c7-cf31-46df-9f82-57968da5dd56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\shaders">
+      <UniqueIdentifier>{8c74d403-5aad-44aa-89c9-c37d3f33d42d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\shaders">
+      <UniqueIdentifier>{68e29a29-62b8-4204-bc8f-e730e3f5b635}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\shaders">
+      <UniqueIdentifier>{44570bc2-7b66-4e77-b728-cb04efae700f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\file">
+      <UniqueIdentifier>{f6e5488d-b0c3-4bfd-9a6d-088703623879}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\file">
+      <UniqueIdentifier>{28362680-5f78-47b5-9d12-ee446265aed8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\memory">
+      <UniqueIdentifier>{9893dccd-e685-4cdc-8245-3e828e5ca2c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\memory">
+      <UniqueIdentifier>{7b720f11-2183-40df-b3e4-ae720b6f8e3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\threads">
+      <UniqueIdentifier>{52a8c5e4-3957-44f5-9c15-ba3b334515f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\engine\threads">
+      <UniqueIdentifier>{bc8a3f1d-5baf-448f-bb0c-258a8310a349}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -51,33 +66,42 @@
     <ClCompile Include="AutoClickerGL.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
-    <ClCompile Include="YAMLFile.cpp">
-      <Filter>Source Files\util\files</Filter>
-    </ClCompile>
     <ClCompile Include="GuiRenderer.cpp">
       <Filter>Source Files\engine\gui</Filter>
     </ClCompile>
     <ClCompile Include="GuiManager.cpp">
       <Filter>Source Files\engine\gui</Filter>
     </ClCompile>
+    <ClCompile Include="YAMLFile.cpp">
+      <Filter>Source Files\engine\file</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Config.yml">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="gui.frag">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="gui.vert">
+      <Filter>Resource Files\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoClickerGL.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="YAMLFile.h">
-      <Filter>Header Files\util\files</Filter>
-    </ClInclude>
     <ClInclude Include="GuiRenderer.h">
       <Filter>Header Files\engine\gui</Filter>
     </ClInclude>
     <ClInclude Include="GuiManager.h">
       <Filter>Header Files\engine\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="YAMLFile.h">
+      <Filter>Header Files\engine\file</Filter>
+    </ClInclude>
+    <ClInclude Include="YAML.hpp">
+      <Filter>Header Files\engine\file</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

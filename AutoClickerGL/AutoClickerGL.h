@@ -1,9 +1,20 @@
+#include<iostream>
+#include<thread>
+
+#define GLEW_STATIC
+
 //dependencies
 #include"GL/glew.h"
 #include"GLFW/glfw3.h"
 
 //My imports
 #include"YAMLFile.h"
+
+//My defines
+
+#define TICK_RATE_FAST 0.001f
+#define TICK_RATE_MED 0.1f
+#define TICK_RATE_SLOW 1.f
 
 #pragma once
 
@@ -25,7 +36,9 @@ public:
 	AutoClickerGL();
 	~AutoClickerGL() = default;
 
-	int end();
+	inline const int end() const {
+		return error;
+	}
 
 };
 

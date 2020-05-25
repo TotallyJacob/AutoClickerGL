@@ -12,17 +12,6 @@ AutoClickerGL::AutoClickerGL() {
 }
 
 void AutoClickerGL::init() {
-
-
-	//GLEW
-	int code = glewInit();
-
-	if (code != GLEW_OK) {
-		std::cout << glewGetErrorString(code) << std::endl;
-		error = -1;
-		return;
-	}
-
 	//GLFW
 	if (!glfwInit()) {
 		glfwTerminate();
@@ -45,12 +34,20 @@ void AutoClickerGL::init() {
 	glfwMakeContextCurrent(window);
 	glfwShowWindow(window);
 
-	//util::file::YAMLFile file("Config.yml");
-}
+	//GLEW
+	int code = glewInit();
+	if (code != GLEW_OK) {
+		std::cout << glewGetErrorString(code) << std::endl;
+		error = -1;
+		return;
+	}
 
+	engine::file::YAMLFile file("Config.yml");
+	std::cout << file.getFloat("app-name") << std::endl;
+}
 void AutoClickerGL::loop() {
 
-	while (glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -58,11 +55,6 @@ void AutoClickerGL::loop() {
 		glfwPollEvents();
 	}
 }
-
 void AutoClickerGL::cleanUp() {
 	glfwTerminate();
-}
-
-int AutoClickerGL::end() {
-	return error;
 }

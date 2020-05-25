@@ -162,11 +162,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Config.yml" />
+    <None Include="gui.frag" />
+    <None Include="gui.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoClickerGL.h" />
     <ClInclude Include="GuiManager.h" />
     <ClInclude Include="GuiRenderer.h" />
+    <ClInclude Include="YAML.hpp" />
     <ClInclude Include="YAMLFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

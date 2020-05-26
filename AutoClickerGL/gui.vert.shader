@@ -4,27 +4,28 @@ layout(location = 0) in vec2 position;
 
 uniform mat4 projectionMatrix;
 
-layout(std430, binding = 0) buffer gui_modelMatrix {
+layout(std430, binding = 0) buffer gui_drawIndex {
+	unsigned int drawIndex[];
+};
+
+layout(std430, binding = 1) buffer gui_modelMatrix {
 	mat4 modelMatrix[];
 };
 
-layout(std430, binding = 0) buffer gui_drawIndex {
-	mat4 drawIndex[];
+layout(std430, binding = 2) buffer gui_depth {
+	float depth[];
 };
 
-layout(std430, binding = 0) buffer gui_colour {
-	mat4 colour[];
+layout(std430, binding = 3) buffer gui_colour {
+	vec4 colour[];
 };
 
-layout(std430, binding = 0) buffer gui_depth {
-	mat4 depth[];
-};
 
 out vec4 fragOut;
 
 void main(){
 
-	unsigned int id = drawIndex[gl_DrawId];
+	unsigned int id = drawIndex[gl_DrawID];
 
 	fragOut = colour[id];
 

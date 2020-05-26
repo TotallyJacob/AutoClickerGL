@@ -4,6 +4,15 @@ using namespace engine::gui;
 
 GuiRenderer::GuiRenderer() {
 
+	//Default SSBOs
+	initDefaultShader();
+	genDefaultSSBOs();
+	bindDefaultSSBOsToShader();
+
+	// @TODO this is temp, remove in future
+	allocateDefaultSSBOMemory(1);
+	genDefaultVertexBuffers();
+	tempFunctionToSetSSBOData();
 }
 
 void GuiRenderer::render(float *projectionMatrix){

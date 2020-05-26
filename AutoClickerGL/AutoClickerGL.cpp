@@ -11,7 +11,11 @@ AutoClickerGL::AutoClickerGL() {
 	cleanUp();
 }
 
-void AutoClickerGL::init() {
+void AutoClickerGL::init(){
+	
+	char c[3];
+	std::cin >> c;
+
 	//GLFW
 	if (!glfwInit()) {
 		glfwTerminate();
@@ -50,12 +54,14 @@ void AutoClickerGL::loop() {
 
 	engine::gui::GuiRenderer guiRenderer;
 
+	glm::mat4 orthoMatrix = glm::ortho(0.f, 1280.f, 0.f, 720.f, 0.1f, 100.f);
+
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		//Drawing
 
-		guiRenderer.render();
+		guiRenderer.render(&orthoMatrix[0][0]);
 
 		//
 		glfwSwapBuffers(window);

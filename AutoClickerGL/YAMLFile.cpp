@@ -2,10 +2,13 @@
 
 using namespace engine::file;
 
-YAMLFile::YAMLFile(const char* fileName) : 
-	fileData(),
-	stringNodes(),
-	floatNodes() {
+YAMLFile::YAMLFile(const char* fileName) :
+	fileData() {
+
+	floatNodes = std::vector<yaml::Node<float>>(0);
+	stringNodes = std::vector<yaml::Node<std::string>>(0);
+
+	yaml::FileData fileData = {};
 
 	readFile(fileName, fileData);
 	parseData(fileData);
@@ -22,7 +25,6 @@ void YAMLFile::readFile(const char *fileName, yaml::FileData &fileData) {
 	std::ifstream file(fileName, std::ios::binary);
 	std::streambuf* raw_buffer = file.rdbuf();
 
-
 	file.seekg(0, std::ios::end);
 	fileData.fileLength = file.tellg();
 	file.seekg(0, std::ios::beg);
@@ -34,14 +36,16 @@ void YAMLFile::readFile(const char *fileName, yaml::FileData &fileData) {
 	file.close();
 }
 void YAMLFile::parseData(yaml::FileData &fileData) {
-	std::string line = "";
-	//char line[64];
 
 	yaml::Node<std::string> placeHolderNode = {};
+	std::string line = "";
+
 	bool ignoreLine = false;
 
 	for (unsigned int index = 0; index < fileData.fileLength; index++) {
 	
+		std::cout << fileData.dataPointer[index] << std::endl;
+
 		if (fileData.dataPointer[index] == '#')
 			ignoreLine = true;
 
@@ -55,8 +59,6 @@ void YAMLFile::parseData(yaml::FileData &fileData) {
 
 			yaml::ValueType type = getValueType(line);
 
-			std::cout << line << std::endl;
-
 			switch(type){
 			
 			case yaml::ValueType::NOTYPE:
@@ -68,10 +70,11 @@ void YAMLFile::parseData(yaml::FileData &fileData) {
 				return;
 
 			case yaml::ValueType::FLOAT:
+				//Creating the node
 				yaml::Node<float> node = {};
 				node.key = placeHolderNode.key;
 				node.value = strtof(placeHolderNode.value.c_str(), 0);
-
+ 
 				floatNodes.push_back(node);
 				return;
 			}
@@ -94,16 +97,16 @@ void YAMLFile::parseData(yaml::FileData &fileData) {
 
 	switch (type) {
 
-	case YAMLType::NOTYPE:
+	case yaml::ValueType::NOTYPE:
 		std::cout << "INVALID NODE: " << placeHolderNode.key << std::endl;
 		return;
 
-	case YAMLType::STRING:
+	case yaml::ValueType::STRING:
 		stringNodes.push_back(placeHolderNode);
 		return;
 
-	case YAMLType::FLOAT:
-		YAMLNode<float> node = {};
+	case yaml::ValueType::FLOAT:
+		yaml::Node<float> node = {};
 		node.key = placeHolderNode.key;
 		node.value = strtof(placeHolderNode.value.c_str(), 0);
 
@@ -113,36 +116,4 @@ void YAMLFile::parseData(yaml::FileData &fileData) {
 
 	line.clear();
 
-}
-
-//PreProcess
-void YAMLFile::preReadFile(const char *fileName) const {
-	std::ifstream file(fileName, std::ios::binary);
-	std::streambuf* raw_buffer = file.rdbuf();
-
-
-	file.seekg(0, std::ios::end);
-	unsigned int fileLength = file.tellg();
-	file.seekg(0, std::ios::beg);
-
-	char *dataPointer = new char[fileData.fileLength];
-
-	raw_buffer->sgetn(fileData.dataPointer, fileData.fileLength);
-
-	file.close();
-}
-void YAMLFile::preProcessFile(yaml::PreProcessdData& preProcessedData, char* data, unsigned int size) const {
-
-	unsigned int line_size = 0;
-
-	for (int i = 0; i < size; i++) {
-
-		if (data[i] = '\n')
-			line_size++;
-
-	}
-
-	preProcessedData.num_lines = line_size;
-
-	delete[] data;
 }

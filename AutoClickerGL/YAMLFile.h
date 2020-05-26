@@ -16,34 +16,30 @@ namespace engine::file {
 	{
 	private:
 
-		yaml::PreProcessdData preProcessedData;
 		yaml::FileData fileData;
 		std::vector<yaml::Node<std::string>> stringNodes;
 		std::vector<yaml::Node<float>> floatNodes;
 
-		inline static yaml::ValueType getValueType(std::string &value) {
+		inline static yaml::ValueType getValueType(std::string value) {
 			int index = 0;
 			for (char c : value) {
+				std::cout << c << std::endl;
 				if (c == '\"') {
-					return YAMLType::STRING;
+					return yaml::ValueType::STRING;
 				}
 				
 				if (index == value.size()
 					&& c == 'f')
-					return YAMLType::FLOAT;
+					return yaml::ValueType::FLOAT;
 
 				index++;
 			}
 
-			return YAMLType::NOTYPE;
+			return yaml::ValueType::NOTYPE;
 		}
 
 		void readFile(const char *fileName, yaml::FileData &fileData);
 		void parseData(yaml::FileData &fileData);
-
-		//Pre processing
-		constexpr void preReadFile(const char* fileName) const;
-		constexpr void preProcessFile(yaml::PreProcessdData &preProcessedData, char *data, unsigned int size) const;
 
 	public:
 
@@ -52,14 +48,17 @@ namespace engine::file {
 
 		inline const std::string getString(std::string key) const {
 			for (auto node : stringNodes) {
-				if (node.key == key)
+				if (node.key.compare(key))
 					return node.value;
 			}
 
 			return "";
 		}
 		inline const float getFloat(std::string key) const {
-			for (auto node : floatNodes) {
+			
+			std::cout << floatNodes.size() << std::endl;
+
+			for (yaml::Node<float> node : floatNodes) {
 				if (node.key == key)
 					return node.value;
 			}

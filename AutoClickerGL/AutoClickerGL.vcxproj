@@ -157,18 +157,21 @@
     <ClCompile Include="AutoClickerGL.cpp" />
     <ClCompile Include="GuiManager.cpp" />
     <ClCompile Include="GuiRenderer.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="YAMLFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Config.yml" />
-    <None Include="gui.frag" />
-    <None Include="gui.vert" />
+    <None Include="gui.frag.shader" />
+    <None Include="gui.vert.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoClickerGL.h" />
+    <ClInclude Include="Gui.hpp" />
     <ClInclude Include="GuiManager.h" />
     <ClInclude Include="GuiRenderer.h" />
+    <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="YAML.hpp" />
     <ClInclude Include="YAMLFile.h" />
   </ItemGroup>

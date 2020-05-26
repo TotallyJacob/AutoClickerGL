@@ -2,8 +2,10 @@
 
 out vec4 Frag;
 
+in vec4 fragOut;
+
 void main(){
 
-	Frag = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	Frag = fragOut;
 
 };

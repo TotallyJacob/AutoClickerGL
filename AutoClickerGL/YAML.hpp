@@ -11,11 +11,9 @@ namespace engine::file::yaml {
 		FLOAT = 2
 	};
 
-	struct PreProcessdData {
-		unsigned int fileLength = 0;
-		unsigned int num_lines = 0;
-		ValueType* lineValueTypes;
-
+	struct NodeData {
+		ValueType type;
+		unsigned int num_chars_to_value = 0; //This is from the colon
 	};
 
 	struct Key {

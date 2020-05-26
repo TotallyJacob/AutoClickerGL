@@ -42,15 +42,22 @@ void AutoClickerGL::init() {
 		return;
 	}
 
-	engine::file::YAMLFile file("Config.yml");
-	std::cout << file.getFloat("app-name") << std::endl;
+	// @TODO fix 
+	//engine::file::YAMLFile file("Config.yml");
+	//std::cout << file.getFloat("app-name") << std::endl;
 }
 void AutoClickerGL::loop() {
+
+	engine::gui::GuiRenderer guiRenderer;
 
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//Drawing
 
+		guiRenderer.render();
+
+		//
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

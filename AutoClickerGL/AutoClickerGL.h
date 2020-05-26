@@ -9,6 +9,7 @@
 
 //My imports
 #include"YAMLFile.h"
+#include"GuiRenderer.h"
 
 //My defines
 

@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AutoClickerGL.cpp" />
+    <ClCompile Include="GuiGeometryManager.cpp" />
     <ClCompile Include="GuiManager.cpp" />
     <ClCompile Include="GuiRenderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
@@ -169,6 +170,7 @@
   <ItemGroup>
     <ClInclude Include="AutoClickerGL.h" />
     <ClInclude Include="Gui.hpp" />
+    <ClInclude Include="GuiGeometryManager.h" />
     <ClInclude Include="GuiManager.h" />
     <ClInclude Include="GuiRenderer.h" />
     <ClInclude Include="ShaderProgram.h" />

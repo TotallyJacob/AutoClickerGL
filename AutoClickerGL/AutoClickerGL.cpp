@@ -52,7 +52,10 @@ void AutoClickerGL::init(){
 }
 void AutoClickerGL::loop() {
 
-	engine::gui::GuiRenderer guiRenderer;
+	//Gui
+	engine::gui::GuiGeometryManager guiGeometryManager;
+	engine::gui::GuiRenderer guiRenderer(&guiGeometryManager);
+	engine::gui::GuiManager guiManager(&guiRenderer);
 
 	glm::mat4 orthoMatrix = glm::ortho(0.f, 1280.f, 0.f, 720.f, 0.1f, 100.f);
 

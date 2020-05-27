@@ -13,9 +13,10 @@
 //My imports
 #include"YAMLFile.h"
 #include"GuiRenderer.h"
+#include"GuiGeometryManager.h"
+#include"GuiManager.h"
 
 //My defines
-
 #define TICK_RATE_FAST 0.001f
 #define TICK_RATE_MED 0.1f
 #define TICK_RATE_SLOW 1.f

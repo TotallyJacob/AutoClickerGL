@@ -2,6 +2,8 @@
 
 using namespace engine::gui;
 
-GuiManager::GuiManager() {
+GuiManager::GuiManager(GuiRenderer *guiRenderer) {
+
+	this->guiRenderer = guiRenderer;
 
 }

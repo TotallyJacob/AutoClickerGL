@@ -7,9 +7,10 @@ namespace engine::gui {
 
 	class GuiManager
 	{
-
+	private:
+		GuiRenderer* guiRenderer;
 	public:
-		GuiManager();
+		GuiManager(GuiRenderer *guiRenderer);
 		~GuiManager() = default;
 
 	};

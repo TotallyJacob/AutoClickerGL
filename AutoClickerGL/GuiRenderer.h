@@ -1,4 +1,3 @@
-
 //dependencies
 #include"GL/glew.h"
 #include"GLM/glm.hpp"
@@ -6,7 +5,8 @@
 #include "GLM/gtx/transform.hpp"
 
 //My imports
-#include"SHaderProgram.h"
+#include"ShaderProgram.h"
+#include"GuiGeometryManager.h"
 
 //SSBO BINDINGS
 #define GUI_DRAWINDEX_BINDING 0
@@ -39,8 +39,6 @@ namespace engine::gui {
 			0.f, 0.f
 		};
 
-
-
 		struct Indirect {
 			unsigned int count = 0;
 			unsigned int instanceCount = 0;
@@ -68,6 +66,8 @@ namespace engine::gui {
 
 		constexpr static unsigned int persistent_map_flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 		unsigned int defaultProgram = 0;
+		GuiGeometryManager* guiGeometryManager;
+
 		DefaultSSBOs defaultSSBOS = {};
 		Renderable renderable = {};
 
@@ -117,7 +117,7 @@ namespace engine::gui {
 
 	public:
 
-		GuiRenderer();
+		GuiRenderer(GuiGeometryManager *guiGeometryManager);
 		~GuiRenderer() = default;
 
 

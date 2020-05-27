@@ -2,7 +2,10 @@
 
 using namespace engine::gui;
 
-GuiRenderer::GuiRenderer() {
+GuiRenderer::GuiRenderer(GuiGeometryManager* guiGeometryManager) {
+
+	//Setting the geometry manager
+	this->guiGeometryManager = guiGeometryManager;
 
 	//Default SSBOs
 	initDefaultShader();

@@ -1,46 +1,16 @@
 #include<iostream>
 #include<fstream>
 
-char* readGuiGeometry(unsigned int &fileLength) {
-	const char* fileName = "C:\\Users\\Jacob\\source\\repos\\AutoClickerGL\\AutoClickerGL\\GuiGeometry.hpp";
+//My imports
+#include"GuiGeometryLoader.h"
 
-	std::ifstream file(fileName, std::ios::binary);
-	std::streambuf* raw_buffer = file.rdbuf();
-
-	file.seekg(0, std::ios::end);
-	fileLength = file.tellg();
-	file.seekg(0, std::ios::beg);
-
-	char* data = new char[fileLength];
-
-	raw_buffer->sgetn(data, fileLength);
-
-	file.close();
-
-	return data;
-}
-void writeData(char* data, unsigned int dataLength) {
-	const char* fileName = "C:\\Users\\Jacob\\source\\repos\\AutoClickerGL\\AutoClickerGL\\GuiGeometry.hpp";
-	auto myfile = std::fstream(fileName, std::ios::out | std::ios::binary);
-	myfile.write(&data[0], sizeof(char) * dataLength);
-	myfile.close();
-}
+constexpr static const char* guiGeometryPath = "C:\\Users\\Jacob\\source\\repos\\AutoClickerGL\\AutoClickerGL\\GuiGeometry.hpp";
 
 int main() {
-	char* data;
-	unsigned int fileLength = 0;
 
-	data = readGuiGeometry(fileLength);
+	gui::GuiGeometryLoader guiGeometryLoader(guiGeometryPath);
 
-	for (int i = 0; i < fileLength; i++) {
-		if (data[i] == '5') {
-			data[i] = '2';
-		}
-	}
-
-	writeData(data, fileLength);
-
-	delete[] data;
+	system("pause");
 
 	return 0;
 }

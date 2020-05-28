@@ -35,7 +35,7 @@ int main() {
 
 	for (int i = 0; i < fileLength; i++) {
 		if (data[i] == '1') {
-			data[i] = '2';
+			data[i] = '1';
 		}
 	}
 

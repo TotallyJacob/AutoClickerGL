@@ -13,21 +13,39 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\gui">
+      <UniqueIdentifier>{71319e31-624d-47a1-8191-824ae3e1fdbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui">
+      <UniqueIdentifier>{90184900-c92d-4cd2-be94-408033a59481}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GuiGeometryLoader.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GuiGeometryParser.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiGeometryReader.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiGeometryWriter.cpp">
+      <Filter>Source Files\gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GuiGeometryLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GuiUtil.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiGeometryParser.h">
+      <Filter>Header Files\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiGeometryReader.h">
+      <Filter>Header Files\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiGeometryWriter.h">
+      <Filter>Header Files\gui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

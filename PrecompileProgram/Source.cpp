@@ -2,13 +2,13 @@
 #include<fstream>
 
 //My imports
-#include"GuiGeometryLoader.h"
+#include"GuiGeometryReader.h"
 
 constexpr static const char* guiGeometryPath = "C:\\Users\\Jacob\\source\\repos\\AutoClickerGL\\AutoClickerGL\\GuiGeometry.hpp";
 
 int main() {
-
-	gui::GuiGeometryLoader guiGeometryLoader(guiGeometryPath);
+	gui::GuiGeometryParser guiGeometryParser;
+	gui::GuiGeometryReader guiGeometryReader(guiGeometryPath, guiGeometryParser);
 
 	system("pause");
 

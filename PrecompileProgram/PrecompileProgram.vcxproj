@@ -142,11 +142,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GuiGeometryLoader.cpp" />
+    <ClCompile Include="GuiGeometryReader.cpp" />
+    <ClCompile Include="GuiGeometryParser.cpp" />
+    <ClCompile Include="GuiGeometryWriter.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GuiGeometryLoader.h" />
+    <ClInclude Include="GuiGeometryReader.h" />
+    <ClInclude Include="GuiGeometryParser.h" />
+    <ClInclude Include="GuiGeometryWriter.h" />
     <ClInclude Include="GuiUtil.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -7,12 +7,13 @@
 
 //My imports
 #include"GuiUtil.hpp"
+#include"GuiGeometryParser.h"
 
 #pragma once
 
 namespace gui {
 
-	class GuiGeometryLoader
+	class GuiGeometryReader
 	{
 	private:
 
@@ -21,16 +22,14 @@ namespace gui {
 		constexpr static const char* path = "C:\\Users\\Jacob\\source\\repos\\AutoClickerGL\\AutoClickerGL";
 		const char* guiGeometryFile;
 
-		//Vertex Data
-		float* vertexData;
-		unsigned int vertexDataLength = 0;
+		std::vector<char> geometryFileData;
 
-		inline const void getGuiGeometryFiles(std::vector<std::wstring>& filePaths) const;
+		void readGuiGeometryFiles();
 
 	public:
 
-		GuiGeometryLoader(const char *guiGeometryFile);
-		~GuiGeometryLoader() = default;
+		GuiGeometryReader(const char *guiGeometryFile, GuiGeometryParser &guiGeometryParser);
+		~GuiGeometryReader() = default;
 
 	};
 

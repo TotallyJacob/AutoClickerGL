@@ -9,6 +9,39 @@
 
 namespace gui::util {
 
+	//Misc
+	constexpr unsigned int getGeometryIndexSize(unsigned int x) {
+		return (x < 10 ? 1 :
+			(x < 100 ? 2 :
+				(x < 1000 ? 3 :
+					(x < 10000 ? 4 :
+						(x < 100000 ? 5 :
+							(x < 1000000 ? 6 :
+								(x < 10000000 ? 7 :
+									(x < 100000000 ? 8 :
+										(x < 1000000000 ? 9 :
+											10))))))))) + 2; //+2 for \n and #
+	}
+	size_t split(const std::string& txt, std::vector<std::string>& strs, char ch)
+	{
+		size_t pos = txt.find(ch);
+		size_t initialPos = 0;
+		strs.clear();
+
+		// Decompose statement
+		while (pos != std::string::npos) {
+			strs.push_back(txt.substr(initialPos, pos - initialPos));
+			initialPos = pos + 1;
+
+			pos = txt.find(ch, initialPos);
+		}
+
+		// Add the last one
+		strs.push_back(txt.substr(initialPos, std::min(pos, txt.size()) - initialPos + 1));
+
+		return strs.size();
+	}
+
 	//wchar and char util
 	static const std::wstring widen(std::string string) {
 		using namespace std;
@@ -50,6 +83,37 @@ namespace gui::util {
 		file.close();
 
 		return data;
+	}
+
+	static void readGuiGeometryData(std::wstring filePath, std::vector<char> &data, unsigned int geometryIndex) {
+		std::ifstream file(filePath, std::ios::binary);
+		std::streambuf* raw_buffer = file.rdbuf();
+
+		file.seekg(0, std::ios::end);
+		unsigned int fileLength = file.tellg();
+		file.seekg(0, std::ios::beg);
+
+		const unsigned int geometryIndexSize = getGeometryIndexSize(geometryIndex);
+
+		data.reserve(fileLength + geometryIndexSize);
+		data.resize(fileLength + geometryIndexSize);
+
+		raw_buffer->sgetn(&data[0], fileLength);
+
+		file.close();
+
+		// @TODO make better
+
+		std::stringstream ss;
+
+		ss << "#";
+		ss << geometryIndex;
+		ss << '\n';
+
+		std::string string = ss.str();
+
+		for (int i = string.size(); i > -1; i--)
+			data.insert(data.begin(), string[i]);
 
 	}
 	

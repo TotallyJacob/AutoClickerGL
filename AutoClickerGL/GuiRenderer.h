@@ -120,7 +120,6 @@ namespace engine::gui {
 		GuiRenderer(GuiGeometryManager *guiGeometryManager);
 		~GuiRenderer() = default;
 
-
 		void render(float *projectionMatrix);
 
 		//Default

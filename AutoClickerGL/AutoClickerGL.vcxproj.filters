@@ -118,5 +118,8 @@
     <ClInclude Include="GuiGeometryManager.h">
       <Filter>Header Files\engine\gui</Filter>
     </ClInclude>
+    <ClInclude Include="GuiGeometry.hpp">
+      <Filter>Header Files\engine\gui</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

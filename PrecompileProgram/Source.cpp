@@ -19,7 +19,6 @@ char* readGuiGeometry(unsigned int &fileLength) {
 
 	return data;
 }
-
 void writeData(char* data, unsigned int dataLength) {
 	const char* fileName = "C:\\Users\\Jacob\\source\\repos\\AutoClickerGL\\AutoClickerGL\\GuiGeometry.hpp";
 	auto myfile = std::fstream(fileName, std::ios::out | std::ios::binary);
@@ -34,8 +33,8 @@ int main() {
 	data = readGuiGeometry(fileLength);
 
 	for (int i = 0; i < fileLength; i++) {
-		if (data[i] == '1') {
-			data[i] = '1';
+		if (data[i] == '5') {
+			data[i] = '2';
 		}
 	}
 

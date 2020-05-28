@@ -12,7 +12,8 @@ namespace engine::gui {
 			unsigned int geometryLength = 0;
 		};
 
-		float* vertexData;
+		float* vertexData = nullptr;
+		unsigned int vertexDataSize = 0;
 
 	public:
 
@@ -20,8 +21,13 @@ namespace engine::gui {
 		~GuiGeometryManager() = default;
 
 		inline void setGeometry() {
+			//Data in here to go out of scope
 			#include"GuiGeometry.hpp"
-			this->vertexData = vertexData;
+
+			this->vertexDataSize = vertexDataSize;
+			this->vertexData = new float[vertexDataSize];
+
+			//memcpy(this->vertexData, vertexData, sizeof(float) * vertexDataSize);
 		}
 
 		inline void freeGeometry() {

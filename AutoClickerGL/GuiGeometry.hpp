@@ -1,3 +1,5 @@
-float vertexData[1]{
+constexpr unsigned int vertexDataSize = 2;
+
+float vertexData[vertexDataSize]{
 	0
 };

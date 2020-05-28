@@ -19,9 +19,13 @@ namespace engine::gui {
 		GuiGeometryManager();
 		~GuiGeometryManager() = default;
 
-		inline void addGeometry(char *fileData) {
+		inline void setGeometry() {
 			#include"GuiGeometry.hpp"
 			this->vertexData = vertexData;
+		}
+
+		inline void freeGeometry() {
+			delete[] vertexData;
 		}
 
 		float* getVertexData() const {

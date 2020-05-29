@@ -3,6 +3,7 @@
 
 //My imports
 #include"GuiUtil.hpp"
+#include"GuiGEometryWriter.h"
 
 #pragma once
 
@@ -15,8 +16,11 @@ namespace gui {
 		float* vertexData;
 		unsigned int vertexDataLength = 0;
 
+		GuiGeometryWriter* guiGeometryWriter;
+
 	public:
-		GuiGeometryParser() = default;
+
+		GuiGeometryParser(GuiGeometryWriter *guiGeometryWriter);
 		~GuiGeometryParser() = default;
 
 		void parseGeometry(std::vector<char>& geometry);

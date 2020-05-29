@@ -7,10 +7,12 @@
 
 #pragma once
 
+// @TODO manage all the inlines -> maybe source
+
 namespace gui::util {
 
 	//Misc
-	constexpr unsigned int getGeometryIndexSize(unsigned int x) {
+	inline constexpr unsigned int getGeometryIndexSize(unsigned int x) {
 		return (x < 10 ? 1 :
 			(x < 100 ? 2 :
 				(x < 1000 ? 3 :
@@ -22,7 +24,7 @@ namespace gui::util {
 										(x < 1000000000 ? 9 :
 											10))))))))) + 2; //+2 for \n and #
 	}
-	size_t split(const std::string& txt, std::vector<std::string>& strs, char ch)
+	inline size_t split(const std::string& txt, std::vector<std::string>& strs, char ch)
 	{
 		size_t pos = txt.find(ch);
 		size_t initialPos = 0;
@@ -43,7 +45,7 @@ namespace gui::util {
 	}
 
 	//wchar and char util
-	static const std::wstring widen(std::string string) {
+	inline static const std::wstring widen(std::string string) {
 		using namespace std;
 
 		std::wostringstream wideStringStream;
@@ -54,7 +56,7 @@ namespace gui::util {
 
 		return wideStringStream.str();
 	}
-	static const std::string narrow(std::wstring string) {
+	inline static const std::string narrow(std::wstring string) {
 		using namespace std;
 
 		ostringstream stringStream;
@@ -68,7 +70,7 @@ namespace gui::util {
 
 	//Reading and writing util
 	template<typename T>
-	[[nodiscard]] static char* readData(T filePath,unsigned int& length) {
+	[[nodiscard]] inline static char* readData(T filePath,unsigned int& length) {
 		std::ifstream file(filePath, std::ios::binary);
 		std::streambuf* raw_buffer = file.rdbuf();
 
@@ -85,7 +87,7 @@ namespace gui::util {
 		return data;
 	}
 
-	static void readGuiGeometryData(std::wstring filePath, std::vector<char> &data, unsigned int geometryIndex) {
+	inline static void readGuiGeometryData(std::wstring filePath, std::vector<char> &data, unsigned int geometryIndex) {
 		std::ifstream file(filePath, std::ios::binary);
 		std::streambuf* raw_buffer = file.rdbuf();
 
@@ -118,7 +120,7 @@ namespace gui::util {
 	}
 	
 	template<typename T>
-	static void writeData(T filePath, char* data, unsigned int length) {
+	inline static void writeData(T filePath, char* data, unsigned int length) {
 		auto myfile = std::fstream(filePath, std::ios::out | std::ios::binary);
 		myfile.write(&data[0], sizeof(char) * length);
 		myfile.close();

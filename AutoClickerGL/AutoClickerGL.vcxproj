@@ -89,6 +89,8 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -109,6 +111,8 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,6 +135,8 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,6 +161,8 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -198,14 +206,14 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-	<ProjectToBuild Include = "$(SolutionDir)PrecompileProgram\PrecompileProgram.vcxproj">
-		<Properties>Configuration=$(Configuration)</Properties>
-	</ProjectToBuild>
+    <ProjectToBuild Include="$(SolutionDir)PrecompileProgram\PrecompileProgram.vcxproj">
+      <Properties>Configuration=$(Configuration)</Properties>
+    </ProjectToBuild>
     <Binaries Include="*.dll;*.exe" />
   </ItemGroup>
   <Target Name="Build">
-	<Message Text="#### Building PrecompileProgram ####" Importance="high" />
-	<MSBuild Projects="@(ProjectToBuild)"/>
+    <Message Text="#### Building PrecompileProgram ####" Importance="high" />
+    <MSBuild Projects="@(ProjectToBuild)" />
     <Message Text="#### Running PrecompileProgram ####" Importance="high" />
     <Exec Command="$(SolutionDir)x64/Debug/PrecompileProgram.exe  %(Binaries.Identity)" />
     <Message Text="#### Finished Running PrecompileProgram ####" Importance="high" />

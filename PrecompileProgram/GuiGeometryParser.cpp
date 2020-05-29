@@ -67,10 +67,6 @@ void GuiGeometryParser::parseGeometry(std::vector<char>& guiGeometry) {
 
 		}
 
-		for (auto f : verts) {
-			std::cout << f << std::endl;
-		}
-
 	}
 
 	guiGeometryWriter->writeGeometry(verts);

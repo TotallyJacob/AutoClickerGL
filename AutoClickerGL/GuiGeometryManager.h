@@ -27,7 +27,7 @@ namespace engine::gui {
 			this->vertexDataSize = vertexDataSize;
 			this->vertexData = new float[vertexDataSize];
 
-			//memcpy(this->vertexData, vertexData, sizeof(float) * vertexDataSize);
+			memcpy(this->vertexData, vertexData, sizeof(float) * vertexDataSize);
 		}
 
 		inline void freeGeometry() {

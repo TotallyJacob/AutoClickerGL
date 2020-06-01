@@ -34,22 +34,34 @@ void GuiGeometryParser::parseGeometry(std::vector<char>& guiGeometry) {
 		line.push_back(c);
 	}
 
-	std::vector<float> temp_vertices;
-	std::vector<float> verts;
+	std::vector<float> temp_vertices(0);
+	std::vector<float> verts(0);
+
+	std::vector<GuiGeometryWriter::GeometryData> geometryData(0);
+	unsigned int current_verts = 0;
+	unsigned int current_geometry = 0;
 
 	for (SplitLine line : newData) {
+
+		if (line.at(0) == "#") {
+			geometryData.push_back({ current_geometry, current_verts });
+			current_geometry++;
+			continue;
+		}
 
 		if (line.at(0) == "v") {
 
 			temp_vertices.push_back(atof(line.at(1).c_str()));
 			temp_vertices.push_back(atof(line.at(2).c_str()));
 			temp_vertices.push_back(atof(line.at(3).c_str()));
-
+			continue;
 		}
 
 		if (line.at(0) == "f") {
 
 			for (int i = 1; i < 4; i++) {
+
+				current_verts+= 3;
 
 				std::stringstream ss;
 				ss << line.at(i);
@@ -69,5 +81,5 @@ void GuiGeometryParser::parseGeometry(std::vector<char>& guiGeometry) {
 
 	}
 
-	guiGeometryWriter->writeGeometry(verts);
+	guiGeometryWriter->writeGeometry(verts, geometryData);
 }

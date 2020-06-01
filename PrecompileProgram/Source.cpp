@@ -15,5 +15,7 @@ int main() {
 	gui::GuiGeometryParser guiGeometryParser(&guiGeometryWriter);
 	gui::GuiGeometryReader guiGeometryReader(guiGeometryPath, guiGeometryParser);
 
+	system("pause");
+
 	return 0;
 }

@@ -12,7 +12,7 @@
 namespace gui::util {
 
 	//Misc
-	inline constexpr unsigned int getGeometryIndexSize(unsigned int x) {
+	/*inline constexpr unsigned int getGeometryIndexSize(unsigned int x) {
 		return (x < 10 ? 1 :
 			(x < 100 ? 2 :
 				(x < 1000 ? 3 :
@@ -23,7 +23,7 @@ namespace gui::util {
 									(x < 100000000 ? 8 :
 										(x < 1000000000 ? 9 :
 											10))))))))) + 2; //+2 for \n and #
-	}
+	}*/
 	inline size_t split(const std::string& txt, std::vector<std::string>& strs, char ch)
 	{
 		size_t pos = txt.find(ch);
@@ -95,28 +95,45 @@ namespace gui::util {
 		unsigned int fileLength = file.tellg();
 		file.seekg(0, std::ios::beg);
 
-		const unsigned int geometryIndexSize = getGeometryIndexSize(geometryIndex);
+		char* buff = new char[fileLength];
 
-		data.reserve(fileLength + geometryIndexSize);
-		data.resize(fileLength + geometryIndexSize);
-
-		raw_buffer->sgetn(&data[0], fileLength);
+		raw_buffer->sgetn(buff, fileLength);
 
 		file.close();
 
 		// @TODO make better
 
-		std::stringstream ss;
+		bool addLineToData = true;
 
-		ss << "#";
-		ss << geometryIndex;
-		ss << '\n';
+		for (int i = 0; i < fileLength; i++) {
+			char d = buff[i];
 
-		std::string string = ss.str();
+			if (d == '#') 
+				addLineToData = false;
 
-		for (int i = string.size(); i > -1; i--)
-			data.insert(data.begin(), string[i]);
+			if (d == 's')
+				addLineToData = false;
 
+			if (d == 'o')
+				addLineToData = false;
+			
+
+			if (d == '\n' && addLineToData == false) {
+				addLineToData = true;
+				continue;
+			}
+
+			if (!addLineToData)
+				continue;
+
+			data.push_back(buff[i]);
+		}
+
+		delete[] buff;
+
+		data.push_back('\n');
+		data.push_back('#');
+		data.push_back('\n');
 	}
 	
 	template<typename T>

@@ -23,7 +23,7 @@ namespace gui {
 		GuiGeometryParser(GuiGeometryWriter *guiGeometryWriter);
 		~GuiGeometryParser() = default;
 
-		void parseGeometry(std::vector<char>& geometry);
+		void parseGeometry(std::vector<char>& geometry, std::vector<std::string>& geometryFileNames);
 	};
 
 };

@@ -9,9 +9,13 @@ namespace engine::gui {
 	{
 	private:
 		GuiRenderer* guiRenderer;
+
 	public:
+
 		GuiManager(GuiRenderer *guiRenderer);
 		~GuiManager() = default;
+
+		void addGuiContainer();
 
 	};
 

@@ -12,18 +12,6 @@
 namespace gui::util {
 
 	//Misc
-	/*inline constexpr unsigned int getGeometryIndexSize(unsigned int x) {
-		return (x < 10 ? 1 :
-			(x < 100 ? 2 :
-				(x < 1000 ? 3 :
-					(x < 10000 ? 4 :
-						(x < 100000 ? 5 :
-							(x < 1000000 ? 6 :
-								(x < 10000000 ? 7 :
-									(x < 100000000 ? 8 :
-										(x < 1000000000 ? 9 :
-											10))))))))) + 2; //+2 for \n and #
-	}*/
 	inline size_t split(const std::string& txt, std::vector<std::string>& strs, char ch)
 	{
 		size_t pos = txt.find(ch);
@@ -42,6 +30,28 @@ namespace gui::util {
 		strs.push_back(txt.substr(initialPos, std::min(pos, txt.size()) - initialPos + 1));
 
 		return strs.size();
+	}
+	inline void toSplitWhitespace(std::vector<char>& currentData, std::vector<std::vector<std::string>>& newData) {
+		std::string line = "";
+
+		using SplitLine = std::vector<std::string>;
+
+		for (auto c : currentData) {
+			if (c == '\n') {
+
+				SplitLine splitByWhiteSpace(0);
+				split(line, splitByWhiteSpace, ' ');
+
+				newData.push_back(std::move(splitByWhiteSpace));
+
+				line.empty();
+				line.clear();
+
+				continue;
+			}
+
+			line.push_back(c);
+		}
 	}
 
 	//wchar and char util
@@ -85,55 +95,6 @@ namespace gui::util {
 		file.close();
 
 		return data;
-	}
-
-	inline static void readGuiGeometryData(std::wstring filePath, std::vector<char> &data, unsigned int geometryIndex) {
-		std::ifstream file(filePath, std::ios::binary);
-		std::streambuf* raw_buffer = file.rdbuf();
-
-		file.seekg(0, std::ios::end);
-		unsigned int fileLength = file.tellg();
-		file.seekg(0, std::ios::beg);
-
-		char* buff = new char[fileLength];
-
-		raw_buffer->sgetn(buff, fileLength);
-
-		file.close();
-
-		// @TODO make better
-
-		bool addLineToData = true;
-
-		for (int i = 0; i < fileLength; i++) {
-			char d = buff[i];
-
-			if (d == '#') 
-				addLineToData = false;
-
-			if (d == 's')
-				addLineToData = false;
-
-			if (d == 'o')
-				addLineToData = false;
-			
-
-			if (d == '\n' && addLineToData == false) {
-				addLineToData = true;
-				continue;
-			}
-
-			if (!addLineToData)
-				continue;
-
-			data.push_back(buff[i]);
-		}
-
-		delete[] buff;
-
-		data.push_back('\n');
-		data.push_back('#');
-		data.push_back('\n');
 	}
 	
 	template<typename T>

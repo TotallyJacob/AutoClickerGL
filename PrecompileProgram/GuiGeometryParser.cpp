@@ -10,29 +10,13 @@ GuiGeometryParser::GuiGeometryParser(GuiGeometryWriter* guiGeometryWriter) {
 
 // @TODO make better
 
-void GuiGeometryParser::parseGeometry(std::vector<char>& guiGeometry) {
+void GuiGeometryParser::parseGeometry(std::vector<char>& guiGeometry, std::vector<std::string> &geometryFileNames) {
 
 	using SplitLine = std::vector<std::string>;
-
 	std::vector<SplitLine> newData;
-	std::string line = "";
 
-	for (auto c : guiGeometry) {
-		if (c == '\n') {
+	util::toSplitWhitespace(guiGeometry, newData);
 
-			SplitLine splitByWhiteSpace(0);
-			util::split(line, splitByWhiteSpace, ' ');
-
-			newData.push_back(std::move(splitByWhiteSpace));
-
-			line.empty();
-			line.clear();
-
-			continue;
-		}
-
-		line.push_back(c);
-	}
 
 	std::vector<float> temp_vertices(0);
 	std::vector<float> verts(0);
@@ -44,7 +28,7 @@ void GuiGeometryParser::parseGeometry(std::vector<char>& guiGeometry) {
 	for (SplitLine line : newData) {
 
 		if (line.at(0) == "#") {
-			geometryData.push_back({ current_geometry, current_verts });
+			geometryData.push_back({ current_geometry, current_verts, geometryFileNames.at(current_geometry) });
 			current_geometry++;
 			continue;
 		}

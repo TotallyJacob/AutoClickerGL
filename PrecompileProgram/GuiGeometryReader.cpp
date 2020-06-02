@@ -7,7 +7,7 @@ GuiGeometryReader::GuiGeometryReader(const char* guiGeometryFile, GuiGeometryPar
 
 	readGuiGeometryFiles();
 
-	guiGeometryParser.parseGeometry(geometryFileData);
+	guiGeometryParser.parseGeometry(geometryFileData, geometryFileNames);
 }
 
 //Private
@@ -22,9 +22,12 @@ void GuiGeometryReader::readGuiGeometryFiles() {
 		std::wstring path = entry.path();
 
 		//If the path has guiIdentifier in it
-		if (path.find(guiIdentifier) != std::wstring::npos) {
+		size_t pathFind = path.find(guiIdentifier);
+		if (pathFind != std::wstring::npos) {
 
-			util::readGuiGeometryData(path, geometryFileData, guiGeometryIndex);
+			geometryFileNames.push_back(util::narrow(path.substr(pathFind + guiIdentifierLength, path.size())));
+
+			readGuiGeometryData(path, geometryFileData, guiGeometryIndex);
 
 			guiGeometryIndex++;
 		}

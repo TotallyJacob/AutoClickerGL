@@ -5,7 +5,13 @@
 
 namespace engine::gui {
 
+	struct GuiContainer {
+		glm::vec3 position;
+		glm::vec3 scale;
+	};
+
 	struct GuiElement {
+		unsigned int guiGeometryId = 0;
 		glm::vec3 position;
 		glm::vec3 scale;
 	};

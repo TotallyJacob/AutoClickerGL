@@ -55,7 +55,11 @@ void AutoClickerGL::loop() {
 	//Gui
 	engine::gui::GuiGeometryManager guiGeometryManager;
 	engine::gui::GuiRenderer guiRenderer(&guiGeometryManager);
+
+	guiGeometryManager.freeGeometry();
+
 	engine::gui::GuiManager guiManager(&guiRenderer);
+	//
 
 	glm::mat4 orthoMatrix = glm::ortho(0.f, 1280.f, 0.f, 720.f, 0.1f, 100.f);
 

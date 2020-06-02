@@ -1,6 +1,6 @@
 #version 460 core
 
-layout(location = 0) in vec2 position;
+layout(location = 0) in vec3 position;
 
 uniform mat4 projectionMatrix;
 
@@ -20,7 +20,6 @@ layout(std430, binding = 3) buffer gui_colour {
 	vec4 colour[];
 };
 
-
 out vec4 fragOut;
 
 void main(){
@@ -29,5 +28,5 @@ void main(){
 
 	fragOut = colour[id];
 
-	gl_Position = projectionMatrix * modelMatrix[id] * vec4(position, depth[id], 1.0f);
+	gl_Position = projectionMatrix * modelMatrix[id] * vec4(vec2(position.x, position.z), depth[id], 1.0f);
 };

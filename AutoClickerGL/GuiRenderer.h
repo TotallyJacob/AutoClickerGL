@@ -28,17 +28,6 @@ namespace engine::gui {
 	{
 	private:
 
-		// @TODO remove
-		float verts[12] = {
-			0.f, 0.f,
-			0.f, -1.0f,
-			1.0f, -1.0f,
-
-			1.0f, -1.0f,
-			1.0f, 0.f,
-			0.f, 0.f
-		};
-
 		struct Indirect {
 			unsigned int count = 0;
 			unsigned int instanceCount = 0;
@@ -154,42 +143,44 @@ namespace engine::gui {
 			glBindVertexArray(renderable.vao);
 
 			// @TODO change for geometry contianer (both functions)
-			genVbo();
-			genIndirectBuffer();
+			genVbo(guiGeometryManager->getVertexData(), guiGeometryManager->getVertexDataSize());
+			genIndirectBuffer(guiGeometryManager->getGeometryInfoData(), guiGeometryManager->getGeometryInfoDataSize());
 
 			glBindVertexArray(0);
 		}
-		inline void genVbo() {
+		inline void genVbo(float *vertices, unsigned int verticesSize) {
 			unsigned int vbo = 0;
 			glGenBuffers(1, &vbo);
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, &verts, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, &vertices[0], GL_STATIC_DRAW);
 
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (const void*)0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (const void*)0);
 			glEnableVertexAttribArray(0);
 
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
-		inline void genIndirectBuffer() {
+		inline void genIndirectBuffer(GuiGeometryManager::GeometryInfoData *geometryInfoData, unsigned int geometryInfoDataSize) {
 			glGenBuffers(1, &renderable.indirectBuffer);
 			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, renderable.indirectBuffer);
 
 			// @TODO properly do this!!
 			// Only genning it for 1 set of geometry
-#define SIZE 1
-			Indirect indirect[SIZE];
-			for (int i = 0; i < SIZE; i++) {
-				indirect[i].count = 6; //Num of vertices
+			Indirect *indirect = new Indirect[geometryInfoDataSize];
+			for (int i = 0; i < geometryInfoDataSize; i++) {
+
+				GuiGeometryManager::GeometryInfoData infoData = geometryInfoData[i];
+
+				indirect[i].count = infoData.geometryLength; //Num of vertices
 				indirect[i].instanceCount = 1; //Num of instances
-				indirect[i].first = 6 * i; //Distance from the start of the indirect Buffer
+				indirect[i].first = infoData.lengthToGeometry; //Distance from the start of the indirect Buffer
 				indirect[i].baseInstance = 0; //No idea
 			}
 
-
-			glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(Indirect) * SIZE, &indirect[0], GL_DYNAMIC_DRAW);
-#undef SIZE 
+			glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(Indirect) * geometryInfoDataSize, &indirect[0], GL_DYNAMIC_DRAW);
 			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+
+			delete[] indirect;
 		}
 
 		inline void tempFunctionToSetSSBOData() {

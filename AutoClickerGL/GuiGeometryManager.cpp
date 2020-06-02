@@ -29,4 +29,9 @@ void GuiGeometryManager::setGeometry() {
 	memcpy(this->vertexData, vertData, sizeof(*vertexData) * vertexDataSize);
 	memcpy(this->geometryInfoData, geometryInfo, sizeof(*geometryInfoData) * geometryInfoSize);
 
+	for (int i = 0; i < geometryInfoSize; i++) {
+		GeometryInfoData geometryInfoData = this->geometryInfoData[i];
+		geometryId.emplace(geometryInfoData.geometryName, i);
+	}
+
 }

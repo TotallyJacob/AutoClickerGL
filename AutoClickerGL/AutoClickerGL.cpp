@@ -56,6 +56,8 @@ void AutoClickerGL::loop() {
 	engine::gui::GuiGeometryManager guiGeometryManager;
 	engine::gui::GuiRenderer guiRenderer(&guiGeometryManager);
 
+	std::cout << guiGeometryManager.getGeometryId("square.obj") << std::endl;
+
 	guiGeometryManager.freeGeometry();
 
 	engine::gui::GuiManager guiManager(&guiRenderer);

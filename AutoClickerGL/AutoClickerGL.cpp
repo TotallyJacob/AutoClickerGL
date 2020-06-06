@@ -61,6 +61,9 @@ void AutoClickerGL::loop() {
 	guiGeometryManager.freeGeometry();
 
 	engine::gui::GuiManager guiManager(&guiRenderer);
+
+	guiRenderer.allocateDefaultSSBOMemory(1);
+	guiRenderer.tempFunctionToSetSSBOData(guiGeometryManager.getGeometryId("square.obj"), 1);
 	//
 
 	glm::mat4 orthoMatrix = glm::ortho(0.f, 1280.f, 0.f, 720.f, 0.1f, 100.f);

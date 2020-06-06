@@ -14,6 +14,12 @@
 #define GUI_DEPTH_BINDING 2
 #define GUI_COLOUR_BINDING 3
 
+//IDs
+#define GUI_DRAWINDEX_ID 0
+#define GUI_MODELMATRIX_ID 1
+#define GUI_DEPTH_ID 2
+#define GUI_COLOUR_ID 3
+
 //SSBO block names
 #define GUI_DRAWINDEX_NAME "gui_drawIndex"
 #define GUI_MODELMATRIX_NAME "gui_modelMatrix"
@@ -45,19 +51,19 @@ namespace engine::gui {
 			unsigned int ssbo = 0;
 			void* persistentMap = 0;
 		};
-		struct DefaultSSBOs {
-			//SSBOs
-			SSBOData drawIndexSSBO = {};
-			SSBOData modelMatrixSSBO = {};
-			SSBOData depthSSBO = {};
-			SSBOData colourSSBO = {};
-		};
 
 		constexpr static unsigned int persistent_map_flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 		unsigned int defaultProgram = 0;
-		GuiGeometryManager* guiGeometryManager;
+		Indirect* indirectPersistentMap = nullptr;
 
-		DefaultSSBOs defaultSSBOS = {};
+
+		SSBOData defaultSSBOS[4] = {
+			SSBOData{0, nullptr},
+			SSBOData{0, nullptr},
+			SSBOData{0, nullptr},
+			SSBOData{0, nullptr}
+		};
+		//DefaultSSBOs defaultSSBOS = {};
 		Renderable renderable = {};
 
 		//Shaders
@@ -80,30 +86,55 @@ namespace engine::gui {
 
 		//SSBOs
 		inline void genDefaultSSBOs() {
-			glGenBuffers(1, &defaultSSBOS.drawIndexSSBO.ssbo);
-			glGenBuffers(1, &defaultSSBOS.modelMatrixSSBO.ssbo);
-			glGenBuffers(1, &defaultSSBOS.depthSSBO.ssbo);
-			glGenBuffers(1, &defaultSSBOS.colourSSBO.ssbo);
+			glGenBuffers(1, &defaultSSBOS[GUI_DRAWINDEX_ID].ssbo);
+			glGenBuffers(1, &defaultSSBOS[GUI_MODELMATRIX_ID].ssbo);
+			glGenBuffers(1, &defaultSSBOS[GUI_DEPTH_ID].ssbo);
+			glGenBuffers(1, &defaultSSBOS[GUI_COLOUR_ID].ssbo);
 		}
 		inline void bindDefaultSSBOsToShader() {
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_DRAWINDEX_BINDING, defaultSSBOS.drawIndexSSBO.ssbo);
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_MODELMATRIX_BINDING, defaultSSBOS.modelMatrixSSBO.ssbo);
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_DEPTH_BINDING, defaultSSBOS.depthSSBO.ssbo);
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_COLOUR_BINDING, defaultSSBOS.colourSSBO.ssbo);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_DRAWINDEX_BINDING, defaultSSBOS[GUI_DRAWINDEX_ID].ssbo);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_MODELMATRIX_BINDING, defaultSSBOS[GUI_MODELMATRIX_ID].ssbo);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_DEPTH_BINDING, defaultSSBOS[GUI_DEPTH_ID].ssbo);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_COLOUR_BINDING, defaultSSBOS[GUI_COLOUR_ID].ssbo);
+		}
+		inline constexpr size_t getSize(const unsigned int ssboId) const {
+			switch (ssboId) {
+
+			case GUI_DRAWINDEX_ID:
+				return sizeof(unsigned int);
+
+			case GUI_MODELMATRIX_ID:
+				return sizeof(glm::mat4);
+
+			case GUI_DEPTH_ID:
+				return sizeof(float);
+
+			case GUI_COLOUR_ID:
+				return sizeof(glm::vec3);
+
+			}
+
+			return 0;
 		}
 
-		// @TODO remove templates for both functions
+		// @TODO explicit template init
 		//Util
 		template<typename T>
-		inline const void allocateSSBOSpace(unsigned int num_elements) const {
-			glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(T) * num_elements, NULL, persistent_map_flags);
+		inline const void allocateSSBOSpace(unsigned int num_elements, const GLenum target = GL_SHADER_STORAGE_BUFFER, const void* initialData = NULL) const {
+			glBufferStorage(target, sizeof(T) * num_elements, initialData, persistent_map_flags);
 		}
 
 		template<typename T>
-		[[nodiscard]] inline void* genSSBOPersistentMap(unsigned int num_elements) const {
-			return glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(T) * num_elements, persistent_map_flags);
+		[[nodiscard]] inline void* genSSBOPersistentMap(unsigned int num_elements, const GLenum target = GL_SHADER_STORAGE_BUFFER) const {
+			return glMapBufferRange(target, 0, sizeof(T) * num_elements, persistent_map_flags);
 		}
-
+		
+		//Default
+		void initRenderingBuffers(GuiGeometryManager* guiGeometryManager);
+		void genVbo(float* vertices, unsigned int verticesSize);
+		
+		void genIndirectBuffer(GuiGeometryManager::GeometryInfoData* geometryInfoData, unsigned int geometryInfoDataSize);
+	
 	public:
 
 		GuiRenderer(GuiGeometryManager *guiGeometryManager);
@@ -112,91 +143,37 @@ namespace engine::gui {
 		void render(float *projectionMatrix);
 
 		//Default
-		// @TODO Evaluate name of function
-		inline void allocateDefaultSSBOMemory(unsigned int num_default_elements) {
-			
-			//Allocate drawIndex
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, defaultSSBOS.drawIndexSSBO.ssbo);
-			allocateSSBOSpace<unsigned int>(num_default_elements);
-			defaultSSBOS.drawIndexSSBO.persistentMap = genSSBOPersistentMap<unsigned int>(num_default_elements);
-			
-			//Allocate modelMatrix
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, defaultSSBOS.modelMatrixSSBO.ssbo);
-			allocateSSBOSpace<glm::mat4>(num_default_elements);
-			defaultSSBOS.modelMatrixSSBO.persistentMap = genSSBOPersistentMap<glm::mat4>(num_default_elements);
-			
-			//Allocate depth
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, defaultSSBOS.depthSSBO.ssbo);
-			allocateSSBOSpace<float>(num_default_elements);
-			defaultSSBOS.depthSSBO.persistentMap = genSSBOPersistentMap<float>(num_default_elements);
-			
-			//Allocate Colour
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, defaultSSBOS.colourSSBO.ssbo);
-			allocateSSBOSpace<glm::vec4>(num_default_elements);
-			defaultSSBOS.colourSSBO.persistentMap = genSSBOPersistentMap<glm::vec4>(num_default_elements);
-		
-
-			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-		}
-		inline void genDefaultVertexBuffers() {
-			glGenVertexArrays(1, &renderable.vao);
-			glBindVertexArray(renderable.vao);
-
-			// @TODO change for geometry contianer (both functions)
-			genVbo(guiGeometryManager->getVertexData(), guiGeometryManager->getVertexDataSize());
-			genIndirectBuffer(guiGeometryManager->getGeometryInfoData(), guiGeometryManager->getGeometryInfoDataSize());
-
-			glBindVertexArray(0);
-		}
-		inline void genVbo(float *vertices, unsigned int verticesSize) {
-			unsigned int vbo = 0;
-			glGenBuffers(1, &vbo);
-			glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize, &vertices[0], GL_STATIC_DRAW);
-
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (const void*)0);
-			glEnableVertexAttribArray(0);
-
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		}
-		inline void genIndirectBuffer(GuiGeometryManager::GeometryInfoData *geometryInfoData, unsigned int geometryInfoDataSize) {
-			glGenBuffers(1, &renderable.indirectBuffer);
-			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, renderable.indirectBuffer);
-
-			// @TODO properly do this!!
-			// Only genning it for 1 set of geometry
-			Indirect *indirect = new Indirect[geometryInfoDataSize];
-			for (int i = 0; i < geometryInfoDataSize; i++) {
-
-				GuiGeometryManager::GeometryInfoData infoData = geometryInfoData[i];
-
-				indirect[i].count = infoData.geometryLength; //Num of vertices
-				indirect[i].instanceCount = 1; //Num of instances
-				indirect[i].first = infoData.lengthToGeometry; //Distance from the start of the indirect Buffer
-				indirect[i].baseInstance = 0; //No idea
-			}
-
-			glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(Indirect) * geometryInfoDataSize, &indirect[0], GL_DYNAMIC_DRAW);
-			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
-
-			delete[] indirect;
+		//Indirect
+		void setIndirectBufferInstances(unsigned int geometryId, unsigned int num_instances) {
+			indirectPersistentMap[geometryId].instanceCount = num_instances;
 		}
 
-		inline void tempFunctionToSetSSBOData() {
+		//SSBO updates
+		void updateSSBO(unsigned int ssboId,void *ssboData, unsigned int numDataToCpy) {
 
-			renderable.drawCount = 1;
+			void* persistentMap = defaultSSBOS[ssboId].persistentMap;
+			memcpy(persistentMap, ssboData, getSize(ssboId) * numDataToCpy);
+
+		}
+		void allocateDefaultSSBOMemory(unsigned int num_default_elements); // @TODO Evaluate name of function
+	
+
+		inline void tempFunctionToSetSSBOData(unsigned int geometryId, unsigned int instances) {
+
+			setIndirectBufferInstances(geometryId, instances);
 
 			glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(100.f, 100.f, -10.f))
 				* glm::scale(glm::vec3(100.0f, 100.0f, 1.0f));
 
 			glm::vec4 colour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-			//Mapping
-			((unsigned int*)defaultSSBOS.drawIndexSSBO.persistentMap)[0] = 0;
-			((glm::mat4*)defaultSSBOS.modelMatrixSSBO.persistentMap)[0] = modelMatrix;
-			((float*)defaultSSBOS.depthSSBO.persistentMap)[0] = 0.f;
-			((glm::vec4*)defaultSSBOS.colourSSBO.persistentMap)[0] = colour;
+			unsigned int drawIds[1] = {0};
+			float depth[1] = { 0.f };
+
+			updateSSBO(GUI_DRAWINDEX_ID, &drawIds[0], 1);
+			updateSSBO(GUI_MODELMATRIX_ID, &modelMatrix[0], 1);
+			updateSSBO(GUI_DEPTH_ID, &depth[0], 1);
+			updateSSBO(GUI_COLOUR_ID, &colour[0], 1);
 		}
 		
 	};

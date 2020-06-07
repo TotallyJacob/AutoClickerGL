@@ -24,7 +24,7 @@ out vec4 fragOut;
 
 void main(){
 
-	unsigned int id = drawIndex[gl_DrawID];
+	unsigned int id = drawIndex[gl_DrawID + gl_InstanceID + gl_BaseInstance];
 
 	fragOut = colour[id];
 

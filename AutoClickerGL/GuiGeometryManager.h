@@ -52,10 +52,7 @@ namespace engine::gui {
 		}
 
 		//GeometryInfoData
-		int getGeometryId(std::string geometryDataName) const {
-			if(geometryId.count(geometryDataName) == 0)
-				return -1;
-
+		unsigned int getGeometryId(std::string geometryDataName) const {
 			return geometryId.at(geometryDataName);
 		}
 		GeometryInfoData* getGeometryInfoData() const {

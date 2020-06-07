@@ -10,9 +10,6 @@ GuiRenderer::GuiRenderer(GuiGeometryManager* guiGeometryManager) {
 	genDefaultSSBOs();
 	bindDefaultSSBOsToShader();
 
-	// @TODO this is temp, remove in future
-	//allocateDefaultSSBOMemory(1);
-	//tempFunctionToSetSSBOData();
 }
 
 void GuiRenderer::render(float *projectionMatrix){
@@ -99,14 +96,14 @@ void GuiRenderer::genIndirectBuffer(GuiGeometryManager::GeometryInfoData* geomet
 
 		GuiGeometryManager::GeometryInfoData infoData = geometryInfoData[i];
 
-		indirect[i].count = infoData.geometryLength; //Num of vertices
+		indirect[i].count = (infoData.geometryLength/3); //Num of vertices
 		indirect[i].instanceCount = 1; //Num of instances
 		indirect[i].first = infoData.lengthToGeometry; //Distance from the start of the indirect Buffer
 		indirect[i].baseInstance = 0; //No idea
 	}
 
 	allocateSSBOSpace<Indirect>(geometryInfoDataSize, GL_DRAW_INDIRECT_BUFFER, &indirect[0]);
-	indirectPersistentMap = (Indirect*)genSSBOPersistentMap<Indirect>(geometryInfoDataSize, GL_DRAW_INDIRECT_BUFFER);
+	this->indirectPersistentMap = (Indirect*)genSSBOPersistentMap<Indirect>(geometryInfoDataSize, GL_DRAW_INDIRECT_BUFFER);
 
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 

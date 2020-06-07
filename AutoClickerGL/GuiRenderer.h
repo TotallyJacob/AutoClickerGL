@@ -110,7 +110,7 @@ namespace engine::gui {
 				return sizeof(float);
 
 			case GUI_COLOUR_ID:
-				return sizeof(glm::vec3);
+				return sizeof(glm::vec4);
 
 			}
 
@@ -157,25 +157,6 @@ namespace engine::gui {
 		}
 		void allocateDefaultSSBOMemory(unsigned int num_default_elements); // @TODO Evaluate name of function
 	
-
-		inline void tempFunctionToSetSSBOData(unsigned int geometryId, unsigned int instances) {
-
-			setIndirectBufferInstances(geometryId, instances);
-
-			glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(100.f, 100.f, -10.f))
-				* glm::scale(glm::vec3(100.0f, 100.0f, 1.0f));
-
-			glm::vec4 colour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-			unsigned int drawIds[1] = {0};
-			float depth[1] = { 0.f };
-
-			updateSSBO(GUI_DRAWINDEX_ID, &drawIds[0], 1);
-			updateSSBO(GUI_MODELMATRIX_ID, &modelMatrix[0], 1);
-			updateSSBO(GUI_DEPTH_ID, &depth[0], 1);
-			updateSSBO(GUI_COLOUR_ID, &colour[0], 1);
-		}
-		
 	};
 
 };

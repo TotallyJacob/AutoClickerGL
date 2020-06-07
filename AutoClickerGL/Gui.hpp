@@ -8,6 +8,14 @@
 
 namespace engine::gui {
 
+	struct GuiElement {
+		unsigned int guiGeometryId = 0;
+		float depth = 0;
+		glm::vec3 position;
+		glm::vec3 scale;
+		glm::vec4 colour;
+	};
+
 	struct GuiContainer {
 
 		bool update = false;
@@ -15,14 +23,13 @@ namespace engine::gui {
 		glm::vec3 position;
 		glm::vec3 scale;
 
-	};
+		std::vector<GuiElement> elements;
 
-	struct GuiElement {
-		unsigned int guiGeometryId = 0;
-		float depth = 0;
-		glm::vec3 position;
-		glm::vec3 scale;
-		glm::vec3 colour;
+		// @TODO look at r values
+		void addElement(GuiElement guiElement) {
+			elements.push_back(guiElement);
+		}
+
 	};
 
 };

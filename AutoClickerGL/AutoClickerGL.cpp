@@ -56,14 +56,35 @@ void AutoClickerGL::loop() {
 	engine::gui::GuiGeometryManager guiGeometryManager;
 	engine::gui::GuiRenderer guiRenderer(&guiGeometryManager);
 
-	std::cout << guiGeometryManager.getGeometryId("square.obj") << std::endl;
-
 	guiGeometryManager.freeGeometry();
 
 	engine::gui::GuiManager guiManager(&guiRenderer);
 
-	guiRenderer.allocateDefaultSSBOMemory(1);
-	guiRenderer.tempFunctionToSetSSBOData(guiGeometryManager.getGeometryId("square.obj"), 1);
+	engine::gui::GuiContainer container = {};
+	container.position = glm::vec3(0.f, 0.f, 0.f);
+	container.scale = glm::vec3(0.f, 0.f, 0.f);
+
+	container.addElement({
+		(guiGeometryManager.getGeometryId("square.obj")),
+		0.1f,
+		glm::vec3(100.f, 100.f, -10.f),
+		glm::vec3(100.f, 100.f, 1.0f),
+		glm::vec4(0.1f, 0.1f, 0.1f, 1.0f)
+	});
+
+	container.addElement({
+	(guiGeometryManager.getGeometryId("square.obj")),
+	0.1f,
+	glm::vec3(200.f, 100.f, -10.f),
+	glm::vec3(100.f, 100.f, 1.0f),
+	glm::vec4(0.0f, 0.0f, 1.f, 1.0f)
+	});
+
+
+	guiManager.setGeometryDataIds(guiGeometryManager.getGeometryInfoDataSize());
+	guiManager.addGuiContainer(container);
+	guiManager.setMatrices();
+	guiManager.setRendererData();
 	//
 
 	glm::mat4 orthoMatrix = glm::ortho(0.f, 1280.f, 0.f, 720.f, 0.1f, 100.f);

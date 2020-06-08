@@ -64,6 +64,8 @@ void AutoClickerGL::loop() {
 	container.position = glm::vec3(0.f, 0.f, 0.f);
 	container.scale = glm::vec3(0.f, 0.f, 0.f);
 
+	container.setGuiGeometryIds(guiGeometryManager.getGeometryInfoDataSize());
+
 	container.addElement({
 		(guiGeometryManager.getGeometryId("square.obj")),
 		0.1f,
@@ -83,7 +85,6 @@ void AutoClickerGL::loop() {
 
 	guiManager.setGeometryDataIds(guiGeometryManager.getGeometryInfoDataSize());
 	guiManager.addGuiContainer(container);
-	guiManager.setMatrices();
 	guiManager.setRendererData();
 	//
 

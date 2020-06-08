@@ -1,3 +1,6 @@
+#include<iostream>
+#include<chrono>
+
 //My imports
 #include"GuiRenderer.h"
 #include"Gui.hpp"
@@ -13,8 +16,6 @@ namespace engine::gui {
 
 		struct DefaultContainerData {
 			std::vector<float> depth;
-			std::vector<glm::vec3> position;
-			std::vector<glm::vec3> scale;
 		};
 		struct DefaultElementData {
 			std::vector<unsigned int> drawIndex;
@@ -42,63 +43,59 @@ namespace engine::gui {
 
 		// @TODO add the stuff
 		inline void setGeometryDataIds(unsigned int num_geometry) {
-			geometryDatas.reserve(num_geometry);
 			geometryDatas.resize(num_geometry);
 		}
 
 		inline void addGuiContainer(GuiContainer& guiContainer) {
 
+			using std::chrono::duration_cast;
+			using std::chrono::nanoseconds;
+			typedef std::chrono::high_resolution_clock clock;
+
+			guiContainer.computeMatrices();
+
+			auto start = clock::now();
+
 			//Setting container data
 			DefaultContainerData &containerData = defaultContainerData;
 			containerData.depth.push_back(guiContainer.depth);
-			containerData.position.push_back(guiContainer.position);
-			containerData.scale.push_back(guiContainer.scale);
+			//containerData.position.push_back(guiContainer.position);
+			//containerData.scale.push_back(guiContainer.scale);
 
 			unsigned int drawIndex = 0;
+			
+			for (int i = 0; i < geometryDatas.size(); i++) {
+				unsigned int& current = geometryDatas.at(i);
+				current += guiContainer.guiGeometryIds.at(i);
+			}
 
+			auto& depth = defaultElementData.depth;
+			depth.resize(depth.size() + guiContainer.depths.size());
+			memcpy(&depth[depth.size() - guiContainer.depths.size()], guiContainer.depths.data(), sizeof(float) * guiContainer.depths.size());
 		
+			auto& colours = defaultElementData.colour;
+			colours.resize(colours.size() + (guiContainer.colours.size() * 4));
+			memcpy(&colours[colours.size() - (guiContainer.colours.size() * 4)], &guiContainer.colours[0], sizeof(float) * 4 * guiContainer.colours.size());
+			
+			//guiContainer.computeMatrices();
+			auto& modelMatrices = defaultElementData.modelMatrices;
+			modelMatrices.resize(modelMatrices.size() + (guiContainer.modelMatrices.size() * 16));
+			memcpy(&modelMatrices[modelMatrices.size() - (guiContainer.modelMatrices.size() * 16)], &guiContainer.modelMatrices[0][0], sizeof(float) * 16 * guiContainer.modelMatrices.size());
+
 			for (auto element : guiContainer.elements) {
-
-				unsigned int& num_instances = geometryDatas.at(element.guiGeometryId);
-				num_instances++;
 				
-				defaultElementMatrixStore.push_back({ element.position , element.scale});
-				
-				//Inserting directly into elementData
 				defaultElementData.drawIndex.push_back(drawIndex);
-				defaultElementData.depth.push_back(element.depth);
-
-				auto& colours = defaultElementData.colour;
-				colours.resize(colours.size() + 4);
-				memcpy(&colours[colours.size() - 4], &element.colour[0], sizeof(float) * 4);
 
 				num_default_elements++;
 				drawIndex++;
 			}
 
-		}
+			auto end = clock::now();
+			std::cout << duration_cast<nanoseconds>(end - start).count() << "ns\n";
 
-		inline void setMatrices() {
-			glm::vec3 position = defaultContainerData.position.at(0);
-			glm::vec3 scale = defaultContainerData.scale.at(0);
-
-			for (auto store : defaultElementMatrixStore) {
-
-				//Creating data
-				glm::mat4 modelMatrix = glm::mat4(1.0f);
-				modelMatrix *= glm::translate(glm::mat4(1.0f), (position + store.position)) * glm::scale(scale + store.scale);
-		
-				//Copying data the data
-				auto& matrices = defaultElementData.modelMatrices;
-				matrices.resize(matrices.size() + 16);
-				memcpy(&matrices[matrices.size() - 16], &modelMatrix[0][0], 16 * sizeof(float));
-			}
 		}
 
 		inline void setRendererData() {
-
-			for (auto a : defaultElementData.modelMatrices)
-				std::cout << a << std::endl;
 
 			guiRenderer->allocateDefaultSSBOMemory(num_default_elements);
 

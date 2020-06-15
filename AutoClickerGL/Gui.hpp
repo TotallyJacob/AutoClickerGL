@@ -1,3 +1,5 @@
+#pragma once
+
 #include<iostream>
 #include<vector>
 
@@ -6,7 +8,13 @@
 #include "GLM/gtc/matrix_transform.hpp"
 #include "GLM/gtx/transform.hpp"
 
+#include"GuiManager.h"
+
 namespace engine::gui {
+
+	struct Range {
+		float value = 0, toValue = 0;
+	};
 
 	struct GuiElement {
 		unsigned int guiGeometryId = 0;
@@ -14,14 +22,20 @@ namespace engine::gui {
 		glm::vec3 position;
 		glm::vec3 scale;
 		glm::vec4 colour;
+		Range xRange;
+		Range yRange;
 	};
 
 	struct GuiContainer {
+
+		void (*onUpdate)(void* manager, int x, int y);
 
 		bool update = false;
 		float depth = 0;
 		glm::vec3 position;
 		glm::vec3 scale;
+
+		unsigned int num_elements = 0;
 
 		std::vector<unsigned int> guiGeometryIds;
 		std::vector<float> depths;
@@ -31,8 +45,6 @@ namespace engine::gui {
 		std::vector<glm::vec3> positions;
 		std::vector<glm::vec3> scales;
 
-		std::vector<GuiElement> elements;
-
 		// @TODO change name
 		void setGuiGeometryIds(unsigned int num_geometry) {
 			guiGeometryIds.resize(num_geometry);
@@ -41,7 +53,6 @@ namespace engine::gui {
 			if (modelMatrices.size() < positions.size())
 				modelMatrices.resize(positions.size() + modelMatrices.size());
 		}
-
 		void computeMatrices() {
 			resizeMatrices();
 
@@ -67,7 +78,7 @@ namespace engine::gui {
 
 			colours.push_back(guiElement.colour);
 
-			elements.push_back(guiElement);
+			num_elements++;
 		}
 
 	};

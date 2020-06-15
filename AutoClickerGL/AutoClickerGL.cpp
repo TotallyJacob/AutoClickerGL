@@ -59,21 +59,47 @@ void AutoClickerGL::loop() {
 	guiGeometryManager.freeGeometry();
 
 	engine::gui::GuiManager guiManager(&guiRenderer);
+	guiManager.setGeometryDataIds(guiGeometryManager.getGeometryInfoDataSize());
 
 	engine::gui::GuiContainer container = {};
+	container.update = true;
+	container.onUpdate = [](void *m, int x, int y) -> void {
+		engine::gui::GuiManager* manager = ((engine::gui::GuiManager*)m);
+
+		bool hover = x <= 300 && x > 100 && y >= 720 - 200 && y < 720;
+		bool hover2 = x <= 100 && x > 0 && y >= 720 - 200 && y < 720;
+		float testColour = manager->elementColour(1, 0);
+		float testColour2 = manager->elementColour(0, 0);
+
+
+		if (testColour != 0.0f && hover) {
+			manager->setColour(1, glm::vec4(0.0f, 0.f, 1.f, 1.0f));
+		}
+
+		if (testColour2 != 1.0f && hover2){
+			manager->setColour(0, glm::vec4(1.0f, 0.f, 0.f, 1.0f));
+		}
+		
+		if (testColour == 0.0f && !hover) {
+			manager->setColour(1, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		}
+
+		if(testColour2 == 1.0f && !hover2) {
+			manager->setColour(0, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		}
+	};
 	container.position = glm::vec3(0.f, 0.f, 0.f);
 	container.scale = glm::vec3(0.f, 0.f, 0.f);
 
+	//Container
 	container.setGuiGeometryIds(guiGeometryManager.getGeometryInfoDataSize());
-
 	container.addElement({
 		(guiGeometryManager.getGeometryId("square.obj")),
 		0.1f,
 		glm::vec3(100.f, 100.f, -10.f),
 		glm::vec3(100.f, 100.f, 1.0f),
 		glm::vec4(0.1f, 0.1f, 0.1f, 1.0f)
-	});
-
+		});
 	container.addElement({
 	(guiGeometryManager.getGeometryId("square.obj")),
 	0.1f,
@@ -82,24 +108,54 @@ void AutoClickerGL::loop() {
 	glm::vec4(0.0f, 0.0f, 1.f, 1.0f)
 	});
 
-
-	guiManager.setGeometryDataIds(guiGeometryManager.getGeometryInfoDataSize());
+	//Gui manager setup
 	guiManager.addGuiContainer(container);
 	guiManager.setRendererData();
 	//
 
 	glm::mat4 orthoMatrix = glm::ortho(0.f, 1280.f, 0.f, 720.f, 0.1f, 100.f);
 
+	//test
+	double px = 0, py = 0;
+
+	autoClicker::Tick tick = {};
+
 	while (!glfwWindowShouldClose(window)) {
+		double startTime = glfwGetTime();
+
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		//Drawing
 
 		guiRenderer.render(&orthoMatrix[0][0]);
 
+		
 		//
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		double elapsedtime = glfwGetTime() - startTime;
+		autoClicker::updateTickTimes(tick, elapsedtime);
+
+		if (autoClicker::onSlowTickTime(tick.slowTickTime)) { }
+		if (autoClicker::onMedTickTime(tick.medTickTime)) {
+			double x = 0, y = 0;
+			glfwGetCursorPos(window, &x, &y);
+			if (px != x || py != y) {
+				guiManager.updateContainers(x, y);
+				px = x;
+				py = y;
+			}
+
+			guiManager.updateColours();
+
+			if (x <= 300 && x > 100 && y >= 720 - 200 && y < 720) {
+				if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+					glfwSetWindowShouldClose(window, 1);
+			}
+		}
+		if (autoClicker::onFastTickTime(tick.fastTickTime)) { }
+
 	}
 }
 void AutoClickerGL::cleanUp() {

@@ -13,12 +13,6 @@ GuiRenderer::GuiRenderer(GuiGeometryManager* guiGeometryManager) {
 }
 
 void GuiRenderer::render(float *projectionMatrix){
-
-	/*
-		Basic drawing layout
-	*/
-
-
 	//binding
 	glUseProgram(defaultProgram);
 	glBindVertexArray(renderable.vao);
@@ -33,7 +27,6 @@ void GuiRenderer::render(float *projectionMatrix){
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 	glBindVertexArray(0);
 	glUseProgram(0);
-
 }
 
 //Default 
@@ -108,4 +101,18 @@ void GuiRenderer::genIndirectBuffer(GuiGeometryManager::GeometryInfoData* geomet
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 
 	delete[] indirect;
+}
+
+//Updating buffers
+void GuiRenderer::updateDrawIndexs(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint) {
+	updateSSBO<unsigned int, unsigned int>(GUI_DRAWINDEX_ID, ssboData, numDataToCpy, persistentMapStartPoint);
+}
+void GuiRenderer::updateModelMatrices(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint) {
+	updateSSBO<float, glm::mat4>(GUI_MODELMATRIX_ID, ssboData, numDataToCpy, persistentMapStartPoint);
+}
+void GuiRenderer::updateDepths(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint) {
+	updateSSBO<float, float>(GUI_DEPTH_ID, ssboData, numDataToCpy, persistentMapStartPoint);
+}
+void GuiRenderer::updateColours(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint) {
+	updateSSBO<float, glm::vec4>(GUI_COLOUR_ID, ssboData, numDataToCpy, persistentMapStartPoint);
 }

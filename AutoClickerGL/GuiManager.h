@@ -1,3 +1,5 @@
+#pragma once
+
 #include<iostream>
 #include<chrono>
 
@@ -5,7 +7,6 @@
 #include"GuiRenderer.h"
 #include"Gui.hpp"
 
-#pragma once
 
 namespace engine::gui {
 
@@ -14,6 +15,7 @@ namespace engine::gui {
 	private:
 		GuiRenderer* guiRenderer;
 
+		//Default
 		struct DefaultContainerData {
 			std::vector<float> depth;
 		};
@@ -29,9 +31,11 @@ namespace engine::gui {
 		};
 
 		unsigned int num_default_elements = 0;
+		bool updateDefaultColours = false;
 
 		std::vector<unsigned int> geometryDatas;
 		std::vector<DefaultElementMatrixData> defaultElementMatrixStore;
+		std::vector<void (*)(void* manager, int x, int y)> defaultContainerUpdate;
 
 		DefaultElementData defaultElementData;
 		DefaultContainerData defaultContainerData;
@@ -59,8 +63,9 @@ namespace engine::gui {
 			//Setting container data
 			DefaultContainerData &containerData = defaultContainerData;
 			containerData.depth.push_back(guiContainer.depth);
-			//containerData.position.push_back(guiContainer.position);
-			//containerData.scale.push_back(guiContainer.scale);
+
+			if(guiContainer.update)
+				defaultContainerUpdate.push_back(guiContainer.onUpdate);
 
 			unsigned int drawIndex = 0;
 			
@@ -82,7 +87,7 @@ namespace engine::gui {
 			modelMatrices.resize(modelMatrices.size() + (guiContainer.modelMatrices.size() * 16));
 			memcpy(&modelMatrices[modelMatrices.size() - (guiContainer.modelMatrices.size() * 16)], &guiContainer.modelMatrices[0][0], sizeof(float) * 16 * guiContainer.modelMatrices.size());
 
-			for (auto element : guiContainer.elements) {
+			for (int i = 0; i < guiContainer.num_elements; i++) {
 				
 				defaultElementData.drawIndex.push_back(drawIndex);
 
@@ -99,15 +104,45 @@ namespace engine::gui {
 
 			guiRenderer->allocateDefaultSSBOMemory(num_default_elements);
 
-			guiRenderer->updateSSBO(GUI_DRAWINDEX_ID, defaultElementData.drawIndex.data(), num_default_elements);
-			guiRenderer->updateSSBO(GUI_MODELMATRIX_ID, defaultElementData.modelMatrices.data(), num_default_elements);
-			guiRenderer->updateSSBO(GUI_DEPTH_ID, defaultElementData.depth.data(), num_default_elements);
-			guiRenderer->updateSSBO(GUI_COLOUR_ID, defaultElementData.colour.data(), num_default_elements);
+			guiRenderer->updateDrawIndexs(defaultElementData.drawIndex.data(), num_default_elements, 0);
+			guiRenderer->updateModelMatrices(defaultElementData.modelMatrices.data(), num_default_elements, 0);
+			guiRenderer->updateDepths(defaultElementData.depth.data(), num_default_elements, 0);
+			guiRenderer->updateColours(defaultElementData.colour.data(), num_default_elements, 0);
 				
 			int i = 0;
 			for (unsigned int  num_instances : geometryDatas) {
 				guiRenderer->setIndirectBufferInstances(i, num_instances);
 				i++;
+			}
+
+		}
+
+		// @TODO temp stuff
+		float elementColour(const unsigned int id, const unsigned int value) const {
+			return defaultElementData.colour.at((id * 4) + value);
+		}
+
+		bool updatingColours() const {
+			return updateDefaultColours;
+		}
+
+		inline void updateColours() {
+			if (updateDefaultColours) {
+				guiRenderer->updateColours(defaultElementData.colour.data(), num_default_elements, 0);
+				//std::cout << "updated colours" << std::endl;
+				updateDefaultColours = false;
+			}
+		}
+
+		inline void setColour(unsigned int elementId, glm::vec4 colour) {
+			float *start = &defaultElementData.colour.at(elementId * 4);
+			memcpy(start, &colour[0], sizeof(float) * 4);
+			updateDefaultColours = true;
+		}
+
+		inline void updateContainers(unsigned int mouseX, unsigned int mouseY) {
+			for (auto function : defaultContainerUpdate) {
+				function(this, mouseX, mouseY);
 			}
 
 		}

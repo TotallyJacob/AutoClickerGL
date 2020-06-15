@@ -56,14 +56,12 @@ namespace engine::gui {
 		unsigned int defaultProgram = 0;
 		Indirect* indirectPersistentMap = nullptr;
 
-
 		SSBOData defaultSSBOS[4] = {
-			SSBOData{0, nullptr},
-			SSBOData{0, nullptr},
-			SSBOData{0, nullptr},
-			SSBOData{0, nullptr}
+			SSBOData{0, nullptr}, //Draw Index
+			SSBOData{0, nullptr}, //Model Matrices
+			SSBOData{0, nullptr}, //Depth
+			SSBOData{0, nullptr}  //colour
 		};
-		//DefaultSSBOs defaultSSBOS = {};
 		Renderable renderable = {};
 
 		//Shaders
@@ -117,7 +115,6 @@ namespace engine::gui {
 			return 0;
 		}
 
-		// @TODO explicit template init
 		//Util
 		template<typename T>
 		inline const void allocateSSBOSpace(unsigned int num_elements, const GLenum target = GL_SHADER_STORAGE_BUFFER, const void* initialData = NULL) const {
@@ -129,10 +126,15 @@ namespace engine::gui {
 			return glMapBufferRange(target, 0, sizeof(T) * num_elements, persistent_map_flags);
 		}
 		
+		template<typename ARRAY_TYPE, typename SIZE>
+		inline void updateSSBO(unsigned int ssboId, void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint) {
+			ARRAY_TYPE* persistentMap = (ARRAY_TYPE*)defaultSSBOS[ssboId].persistentMap;
+			memcpy(&persistentMap[persistentMapStartPoint], ssboData, sizeof(SIZE) * numDataToCpy);
+		}
+
 		//Default
 		void initRenderingBuffers(GuiGeometryManager* guiGeometryManager);
 		void genVbo(float* vertices, unsigned int verticesSize);
-		
 		void genIndirectBuffer(GuiGeometryManager::GeometryInfoData* geometryInfoData, unsigned int geometryInfoDataSize);
 	
 	public:
@@ -142,21 +144,18 @@ namespace engine::gui {
 
 		void render(float *projectionMatrix);
 
-		//Default
 		//Indirect
-		void setIndirectBufferInstances(unsigned int geometryId, unsigned int num_instances) {
+		inline void setIndirectBufferInstances(unsigned int geometryId, unsigned int num_instances) {
 			indirectPersistentMap[geometryId].instanceCount = num_instances;
 		}
 
-		//SSBO updates
-		void updateSSBO(unsigned int ssboId,void *ssboData, unsigned int numDataToCpy) {
-
-			void* persistentMap = defaultSSBOS[ssboId].persistentMap;
-			memcpy(persistentMap, ssboData, getSize(ssboId) * numDataToCpy);
-
-		}
+		//SSBO
 		void allocateDefaultSSBOMemory(unsigned int num_default_elements); // @TODO Evaluate name of function
-	
+		
+		void updateDrawIndexs(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint);
+		void updateModelMatrices(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint);
+		void updateDepths(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint);
+		void updateColours(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint);
 	};
 
 };

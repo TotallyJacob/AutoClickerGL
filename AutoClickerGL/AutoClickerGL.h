@@ -1,5 +1,4 @@
 #include<iostream>
-#include<thread>
 
 #define GLEW_STATIC
 
@@ -18,10 +17,51 @@
 
 //My defines
 #define TICK_RATE_FAST 0.001f
-#define TICK_RATE_MED 0.1f
+#define TICK_RATE_MED 0.02f
 #define TICK_RATE_SLOW 1.f
 
 #pragma once
+
+namespace autoClicker {
+
+	struct Tick {
+		double slowTickTime = 0, medTickTime = 0, fastTickTime = 0;
+	};
+
+	static void updateTickTimes(Tick& tick, double elapsed) {
+		tick.slowTickTime += elapsed;
+		tick.medTickTime += elapsed;
+		tick.fastTickTime += elapsed;
+	}
+
+	static bool onSlowTickTime(double &slowTickTime) {
+		if (slowTickTime >= TICK_RATE_SLOW) {
+			slowTickTime = 0;
+
+			return true;
+		}
+
+		return false;
+	}
+	static bool onMedTickTime(double &medTickTime) {
+		if (medTickTime >= TICK_RATE_MED) {
+			medTickTime = 0;
+
+			return true;
+		}
+
+		return false;
+	}
+	static bool onFastTickTime(double &fastTickTime) {
+		if (fastTickTime == TICK_RATE_FAST) {
+			fastTickTime = 0;
+
+			return true;
+		}
+
+		return false;
+	}
+}
 
 class AutoClickerGL
 {

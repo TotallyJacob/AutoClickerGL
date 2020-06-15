@@ -37,7 +37,8 @@ namespace engine::gui {
 
 		unsigned int num_elements = 0;
 
-		std::vector<unsigned int> guiGeometryIds;
+		std::vector<unsigned int> elementGeometryId;
+		std::vector<unsigned int> guiGeometryInstances;
 		std::vector<float> depths;
 		std::vector<glm::mat4> modelMatrices;
 		std::vector<glm::vec4> colours;
@@ -47,7 +48,7 @@ namespace engine::gui {
 
 		// @TODO change name
 		void setGuiGeometryIds(unsigned int num_geometry) {
-			guiGeometryIds.resize(num_geometry);
+			guiGeometryInstances.resize(num_geometry);
 		}
 		void resizeMatrices() {
 			if (modelMatrices.size() < positions.size())
@@ -69,7 +70,9 @@ namespace engine::gui {
 		// @TODO look at r values
 		void addElement(GuiElement guiElement) {
 
-			unsigned int &geometryIds = guiGeometryIds.at(guiElement.guiGeometryId);
+			elementGeometryId.push_back(guiElement.guiGeometryId);
+
+			unsigned int &geometryIds = guiGeometryInstances.at(guiElement.guiGeometryId);
 			geometryIds++;
 
 			depths.push_back(guiElement.depth + this->depth);

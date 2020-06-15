@@ -16,8 +16,16 @@ namespace engine::gui {
 		GuiRenderer* guiRenderer;
 
 		//Default
+		struct Range {
+			unsigned int start = 0;
+			unsigned int end = 0;
+		};
 		struct DefaultContainerData {
+			std::vector<Range> range;
 			std::vector<float> depth;
+			std::vector<glm::vec3> position;
+			std::vector<std::vector<unsigned int>> instancesPerGeometry;
+			std::vector<std::vector<unsigned int>> elementGeometryIds;
 		};
 		struct DefaultElementData {
 			std::vector<unsigned int> drawIndex;
@@ -30,10 +38,11 @@ namespace engine::gui {
 			glm::vec3 scale;
 		};
 
+		unsigned int num_containers = 0;
 		unsigned int num_default_elements = 0;
 		bool updateDefaultColours = false;
 
-		std::vector<unsigned int> geometryDatas;
+		std::vector<unsigned int> defaultInstancesPerGeometry;
 		std::vector<DefaultElementMatrixData> defaultElementMatrixStore;
 		std::vector<void (*)(void* manager, int x, int y)> defaultContainerUpdate;
 
@@ -47,7 +56,7 @@ namespace engine::gui {
 
 		// @TODO add the stuff
 		inline void setGeometryDataIds(unsigned int num_geometry) {
-			geometryDatas.resize(num_geometry);
+			defaultInstancesPerGeometry.resize(num_geometry);
 		}
 
 		inline void addGuiContainer(GuiContainer& guiContainer) {
@@ -63,17 +72,21 @@ namespace engine::gui {
 			//Setting container data
 			DefaultContainerData &containerData = defaultContainerData;
 			containerData.depth.push_back(guiContainer.depth);
+			containerData.position.push_back(guiContainer.position);
+			containerData.instancesPerGeometry.push_back(guiContainer.guiGeometryInstances);
+			containerData.elementGeometryIds.push_back(guiContainer.elementGeometryId);
+			
+			Range range = {};
+			range.start = num_default_elements;
+			num_default_elements += guiContainer.num_elements;
+			range.end = num_default_elements;
+
+			containerData.range.push_back(range); //How many elements currently added to the arrays
+			//
 
 			if(guiContainer.update)
 				defaultContainerUpdate.push_back(guiContainer.onUpdate);
-
-			unsigned int drawIndex = 0;
 			
-			for (int i = 0; i < geometryDatas.size(); i++) {
-				unsigned int& current = geometryDatas.at(i);
-				current += guiContainer.guiGeometryIds.at(i);
-			}
-
 			auto& depth = defaultElementData.depth;
 			depth.resize(depth.size() + guiContainer.depths.size());
 			memcpy(&depth[depth.size() - guiContainer.depths.size()], guiContainer.depths.data(), sizeof(float) * guiContainer.depths.size());
@@ -87,19 +100,35 @@ namespace engine::gui {
 			modelMatrices.resize(modelMatrices.size() + (guiContainer.modelMatrices.size() * 16));
 			memcpy(&modelMatrices[modelMatrices.size() - (guiContainer.modelMatrices.size() * 16)], &guiContainer.modelMatrices[0][0], sizeof(float) * 16 * guiContainer.modelMatrices.size());
 
-			for (int i = 0; i < guiContainer.num_elements; i++) {
-				
-				defaultElementData.drawIndex.push_back(drawIndex);
-
-				num_default_elements++;
-				drawIndex++;
-			}
-
 			auto end = clock::now();
 			std::cout << duration_cast<nanoseconds>(end - start).count() << "ns\n";
 
+			num_containers++;
 		}
 
+		inline void setDrawIndexs() {
+			std::vector<unsigned int>& drawIndexs = defaultElementData.drawIndex;
+
+			for (int index = 0; index < num_containers; index++) {
+
+				std::vector<unsigned int>& geometryIds = defaultContainerData.elementGeometryIds.at(index);
+				//std::vector<unsigned int> &instancesPerGeometry = defaultContainerData.instancesPerGeometry.at(index);
+
+				Range &containersElementIndexRange = defaultContainerData.range.at(index);
+
+				for (unsigned int elementId = 0; elementId < geometryIds.size(); elementId++) {
+
+					unsigned int elementsGeometryId = geometryIds.at(elementId); 
+
+					elementId += containersElementIndexRange.start; //ActualElement id -> not just relative to the container
+
+					drawIndexs.insert(drawIndexs.begin() + defaultInstancesPerGeometry.at(elementsGeometryId), elementId);
+
+					defaultInstancesPerGeometry.at(elementsGeometryId) += 1; // increasing the defaultInstances per geometry
+				}
+
+			}
+		}
 		inline void setRendererData() {
 
 			guiRenderer->allocateDefaultSSBOMemory(num_default_elements);
@@ -110,7 +139,7 @@ namespace engine::gui {
 			guiRenderer->updateColours(defaultElementData.colour.data(), num_default_elements, 0);
 				
 			int i = 0;
-			for (unsigned int  num_instances : geometryDatas) {
+			for (unsigned int  num_instances : defaultInstancesPerGeometry) {
 				guiRenderer->setIndirectBufferInstances(i, num_instances);
 				i++;
 			}

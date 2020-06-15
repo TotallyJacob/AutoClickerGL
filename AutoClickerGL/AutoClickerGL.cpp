@@ -63,7 +63,7 @@ void AutoClickerGL::loop() {
 
 	engine::gui::GuiContainer container = {};
 	container.update = true;
-	container.onUpdate = [](void *m, int x, int y) -> void {
+	container.onUpdate = [](void* m, int x, int y) -> void {
 		engine::gui::GuiManager* manager = ((engine::gui::GuiManager*)m);
 
 		bool hover = x <= 300 && x > 100 && y >= 720 - 200 && y < 720;
@@ -76,15 +76,15 @@ void AutoClickerGL::loop() {
 			manager->setColour(1, glm::vec4(0.0f, 0.f, 1.f, 1.0f));
 		}
 
-		if (testColour2 != 1.0f && hover2){
+		if (testColour2 != 1.0f && hover2) {
 			manager->setColour(0, glm::vec4(1.0f, 0.f, 0.f, 1.0f));
 		}
-		
+
 		if (testColour == 0.0f && !hover) {
 			manager->setColour(1, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 		}
 
-		if(testColour2 == 1.0f && !hover2) {
+		if (testColour2 == 1.0f && !hover2) {
 			manager->setColour(0, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 		}
 	};
@@ -106,12 +106,14 @@ void AutoClickerGL::loop() {
 	glm::vec3(200.f, 100.f, -10.f),
 	glm::vec3(100.f, 100.f, 1.0f),
 	glm::vec4(0.0f, 0.0f, 1.f, 1.0f)
-	});
+		});
 
 	//Gui manager setup
 	guiManager.addGuiContainer(container);
+	guiManager.setDrawIndexs();
 	guiManager.setRendererData();
 	//
+
 
 	glm::mat4 orthoMatrix = glm::ortho(0.f, 1280.f, 0.f, 720.f, 0.1f, 100.f);
 

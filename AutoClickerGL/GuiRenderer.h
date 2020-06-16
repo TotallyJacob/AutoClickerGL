@@ -64,56 +64,10 @@ namespace engine::gui {
 		};
 		Renderable renderable = {};
 
-		//Shaders
-		inline void initDefaultShader() {
-			ShaderProgram program({ "gui.vert.shader","gui.frag.shader" });
-			defaultProgram = program;
-
-			//Finding block binding indexs
-			unsigned int drawIndex_binding = glGetProgramResourceIndex(defaultProgram, GL_SHADER_STORAGE_BUFFER, GUI_DRAWINDEX_NAME);
-			unsigned int modelMatrix_binding = glGetProgramResourceIndex(defaultProgram, GL_SHADER_STORAGE_BUFFER, GUI_MODELMATRIX_NAME);
-			unsigned int depth_binding = glGetProgramResourceIndex(defaultProgram, GL_SHADER_STORAGE_BUFFER, GUI_DEPTH_NAME);
-			unsigned int colour_binding = glGetProgramResourceIndex(defaultProgram, GL_SHADER_STORAGE_BUFFER, GUI_COLOUR_NAME);
-
-			//Setting Binding blocks
-			glShaderStorageBlockBinding(defaultProgram, drawIndex_binding, GUI_DRAWINDEX_BINDING);
-			glShaderStorageBlockBinding(defaultProgram, modelMatrix_binding, GUI_MODELMATRIX_BINDING);
-			glShaderStorageBlockBinding(defaultProgram, depth_binding, GUI_DEPTH_BINDING);
-			glShaderStorageBlockBinding(defaultProgram, colour_binding, GUI_COLOUR_BINDING);
-		}
-
-		//SSBOs
-		inline void genDefaultSSBOs() {
-			glGenBuffers(1, &defaultSSBOS[GUI_DRAWINDEX_ID].ssbo);
-			glGenBuffers(1, &defaultSSBOS[GUI_MODELMATRIX_ID].ssbo);
-			glGenBuffers(1, &defaultSSBOS[GUI_DEPTH_ID].ssbo);
-			glGenBuffers(1, &defaultSSBOS[GUI_COLOUR_ID].ssbo);
-		}
-		inline void bindDefaultSSBOsToShader() {
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_DRAWINDEX_BINDING, defaultSSBOS[GUI_DRAWINDEX_ID].ssbo);
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_MODELMATRIX_BINDING, defaultSSBOS[GUI_MODELMATRIX_ID].ssbo);
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_DEPTH_BINDING, defaultSSBOS[GUI_DEPTH_ID].ssbo);
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_COLOUR_BINDING, defaultSSBOS[GUI_COLOUR_ID].ssbo);
-		}
-		inline constexpr size_t getSize(const unsigned int ssboId) const {
-			switch (ssboId) {
-
-			case GUI_DRAWINDEX_ID:
-				return sizeof(unsigned int);
-
-			case GUI_MODELMATRIX_ID:
-				return sizeof(glm::mat4);
-
-			case GUI_DEPTH_ID:
-				return sizeof(float);
-
-			case GUI_COLOUR_ID:
-				return sizeof(glm::vec4);
-
-			}
-
-			return 0;
-		}
+		//Default init
+		inline void initDefaultShader();
+		inline void genDefaultSSBOs();
+		inline void bindDefaultSSBOsToShader();
 
 		//Util
 		template<typename T>
@@ -129,6 +83,11 @@ namespace engine::gui {
 		template<typename ARRAY_TYPE, typename SIZE>
 		inline void updateSSBO(unsigned int ssboId, void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint) {
 			ARRAY_TYPE* persistentMap = (ARRAY_TYPE*)defaultSSBOS[ssboId].persistentMap;
+			updatePersistentMap<ARRAY_TYPE, SIZE>(persistentMap, ssboData, numDataToCpy, persistentMapStartPoint);
+		}
+
+		template<typename ARRAY_TYPE, typename SIZE>
+		inline void updatePersistentMap(ARRAY_TYPE *persistentMap, void* ssboData, const unsigned int numDataToCpy, const unsigned int persistentMapStartPoint) {
 			memcpy(&persistentMap[persistentMapStartPoint], ssboData, sizeof(SIZE) * numDataToCpy);
 		}
 
@@ -148,14 +107,20 @@ namespace engine::gui {
 		inline void setIndirectBufferInstances(unsigned int geometryId, unsigned int num_instances) {
 			indirectPersistentMap[geometryId].instanceCount = num_instances;
 		}
+		void updateIndirectBuffer(void* data, unsigned int numIndirectBuffer, unsigned int persistentMapStartPoint);
 
-		//SSBO
+		//SSBO setters
 		void allocateDefaultSSBOMemory(unsigned int num_default_elements); // @TODO Evaluate name of function
 		
 		void updateDrawIndexs(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint);
 		void updateModelMatrices(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint);
 		void updateDepths(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint);
 		void updateColours(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint);
+
+		//SSBO getters
+		const float* getColours() const {
+			return (float*)defaultSSBOS[GUI_COLOUR_ID].persistentMap;
+		}
 	};
 
 };

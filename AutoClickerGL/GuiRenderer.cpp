@@ -55,6 +55,38 @@ void GuiRenderer::allocateDefaultSSBOMemory(unsigned int num_default_elements) {
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
+//SSBOS
+void GuiRenderer::genDefaultSSBOs() {
+	glGenBuffers(1, &defaultSSBOS[GUI_DRAWINDEX_ID].ssbo);
+	glGenBuffers(1, &defaultSSBOS[GUI_MODELMATRIX_ID].ssbo);
+	glGenBuffers(1, &defaultSSBOS[GUI_DEPTH_ID].ssbo);
+	glGenBuffers(1, &defaultSSBOS[GUI_COLOUR_ID].ssbo);
+}
+void GuiRenderer::bindDefaultSSBOsToShader() {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_DRAWINDEX_BINDING, defaultSSBOS[GUI_DRAWINDEX_ID].ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_MODELMATRIX_BINDING, defaultSSBOS[GUI_MODELMATRIX_ID].ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_DEPTH_BINDING, defaultSSBOS[GUI_DEPTH_ID].ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GUI_COLOUR_BINDING, defaultSSBOS[GUI_COLOUR_ID].ssbo);
+}
+
+//Shaders
+void GuiRenderer::initDefaultShader() {
+	ShaderProgram program({ "gui.vert.shader","gui.frag.shader" });
+	defaultProgram = program;
+
+	//Finding block binding indexs
+	unsigned int drawIndex_binding = glGetProgramResourceIndex(defaultProgram, GL_SHADER_STORAGE_BUFFER, GUI_DRAWINDEX_NAME);
+	unsigned int modelMatrix_binding = glGetProgramResourceIndex(defaultProgram, GL_SHADER_STORAGE_BUFFER, GUI_MODELMATRIX_NAME);
+	unsigned int depth_binding = glGetProgramResourceIndex(defaultProgram, GL_SHADER_STORAGE_BUFFER, GUI_DEPTH_NAME);
+	unsigned int colour_binding = glGetProgramResourceIndex(defaultProgram, GL_SHADER_STORAGE_BUFFER, GUI_COLOUR_NAME);
+
+	//Setting Binding blocks
+	glShaderStorageBlockBinding(defaultProgram, drawIndex_binding, GUI_DRAWINDEX_BINDING);
+	glShaderStorageBlockBinding(defaultProgram, modelMatrix_binding, GUI_MODELMATRIX_BINDING);
+	glShaderStorageBlockBinding(defaultProgram, depth_binding, GUI_DEPTH_BINDING);
+	glShaderStorageBlockBinding(defaultProgram, colour_binding, GUI_COLOUR_BINDING);
+}
+
 //Buffers
 void GuiRenderer::initRenderingBuffers(GuiGeometryManager* guiGeometryManager) {
 	glGenVertexArrays(1, &renderable.vao);
@@ -104,6 +136,9 @@ void GuiRenderer::genIndirectBuffer(GuiGeometryManager::GeometryInfoData* geomet
 }
 
 //Updating buffers
+void GuiRenderer::updateIndirectBuffer(void* data, unsigned int numIndirectBuffer, unsigned int persistentMapStartPoint) {
+	updatePersistentMap<Indirect, Indirect>(indirectPersistentMap, data, numIndirectBuffer, persistentMapStartPoint);
+}
 void GuiRenderer::updateDrawIndexs(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint) {
 	updateSSBO<unsigned int, unsigned int>(GUI_DRAWINDEX_ID, ssboData, numDataToCpy, persistentMapStartPoint);
 }

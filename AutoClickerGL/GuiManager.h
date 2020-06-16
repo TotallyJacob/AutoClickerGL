@@ -42,12 +42,10 @@ namespace engine::gui {
 		unsigned int num_default_elements = 0;
 		bool updateDefaultColours = false;
 
-		std::vector<unsigned int> defaultInstancesPerGeometry;
-		std::vector<DefaultElementMatrixData> defaultElementMatrixStore;
-		std::vector<void (*)(void* manager, int x, int y)> defaultContainerUpdate;
-
 		DefaultElementData defaultElementData;
 		DefaultContainerData defaultContainerData;
+		std::vector<unsigned int> defaultInstancesPerGeometry;
+		std::vector<void (*)(void* manager, int x, int y)> defaultContainerUpdate;
 
 	public:
 
@@ -112,7 +110,6 @@ namespace engine::gui {
 			for (int index = 0; index < num_containers; index++) {
 
 				std::vector<unsigned int>& geometryIds = defaultContainerData.elementGeometryIds.at(index);
-				//std::vector<unsigned int> &instancesPerGeometry = defaultContainerData.instancesPerGeometry.at(index);
 
 				Range &containersElementIndexRange = defaultContainerData.range.at(index);
 
@@ -148,25 +145,11 @@ namespace engine::gui {
 
 		// @TODO temp stuff
 		float elementColour(const unsigned int id, const unsigned int value) const {
-			return defaultElementData.colour.at((id * 4) + value);
-		}
-
-		bool updatingColours() const {
-			return updateDefaultColours;
-		}
-
-		inline void updateColours() {
-			if (updateDefaultColours) {
-				guiRenderer->updateColours(defaultElementData.colour.data(), num_default_elements, 0);
-				//std::cout << "updated colours" << std::endl;
-				updateDefaultColours = false;
-			}
+			return guiRenderer->getColours()[(id * 4) + value];
 		}
 
 		inline void setColour(unsigned int elementId, glm::vec4 colour) {
-			float *start = &defaultElementData.colour.at(elementId * 4);
-			memcpy(start, &colour[0], sizeof(float) * 4);
-			updateDefaultColours = true;
+			guiRenderer->updateColours(&colour[0], num_default_elements, elementId * 4);
 		}
 
 		inline void updateContainers(unsigned int mouseX, unsigned int mouseY) {

@@ -61,34 +61,38 @@ void AutoClickerGL::loop() {
 	engine::gui::GuiManager guiManager(&guiRenderer);
 	guiManager.setGeometryDataIds(guiGeometryManager.getGeometryInfoDataSize());
 
+#define HEIGHT 560
+#define WIDTH 980
+
+
 	engine::gui::GuiContainer container = {};
 	container.update = true;
 	container.onUpdate = [](void* m, int x, int y) -> void {
 		engine::gui::GuiManager* manager = ((engine::gui::GuiManager*)m);
 
-		bool hover = x <= 300 && x > 100 && y >= 720 - 200 && y < 720;
-		bool hover2 = x <= 100 && x > 0 && y >= 720 - 200 && y < 720;
+		bool hover = x <= 300 + WIDTH && x > 100 + WIDTH && y >= 720 - HEIGHT - 200 && y < 720 - HEIGHT;
+		bool hover2 = x <= 100 + WIDTH && x > 0 + WIDTH && y >= 720 - HEIGHT - 200 && y < 720 - HEIGHT;
 		float testColour = manager->elementColour(1, 0);
 		float testColour2 = manager->elementColour(0, 0);
 
 
 		if (testColour != 0.0f && hover) {
-			manager->setColour(1, glm::vec4(0.0f, 0.f, 1.f, 1.0f));
+			manager->setColour(1, glm::vec4(1.0f, 0.f, 0.f, 1.0f));
 		}
 
 		if (testColour2 != 1.0f && hover2) {
-			manager->setColour(0, glm::vec4(1.0f, 0.f, 0.f, 1.0f));
+			manager->setColour(0, glm::vec4(0.0f, 0.f, 1.f, 1.0f));
 		}
 
-		if (testColour == 0.0f && !hover) {
+		if (testColour == 1.0f && !hover) {
 			manager->setColour(1, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 		}
 
-		if (testColour2 == 1.0f && !hover2) {
+		if (testColour2 == 0.0f && !hover2) {
 			manager->setColour(0, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 		}
 	};
-	container.position = glm::vec3(0.f, 0.f, 0.f);
+	container.position = glm::vec3(WIDTH, HEIGHT, 0.f);
 	container.scale = glm::vec3(0.f, 0.f, 0.f);
 
 	//Container
@@ -105,7 +109,7 @@ void AutoClickerGL::loop() {
 	0.1f,
 	glm::vec3(200.f, 100.f, -10.f),
 	glm::vec3(100.f, 100.f, 1.0f),
-	glm::vec4(0.0f, 0.0f, 1.f, 1.0f)
+	glm::vec4(0.1f, 0.1f, 0.1f, 1.0f)
 		});
 
 	//Gui manager setup
@@ -149,9 +153,7 @@ void AutoClickerGL::loop() {
 				py = y;
 			}
 
-			guiManager.updateColours();
-
-			if (x <= 300 && x > 100 && y >= 720 - 200 && y < 720) {
+			if (x <= 300 + WIDTH && x > 100 + WIDTH && y >= 720 - HEIGHT - 200 && y < 720 - HEIGHT) {
 				if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
 					glfwSetWindowShouldClose(window, 1);
 			}

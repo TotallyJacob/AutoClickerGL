@@ -67,7 +67,7 @@ void AutoClickerGL::loop() {
 
 	engine::gui::GuiContainer container = {};
 	container.update = true;
-	container.onUpdate = [](void* m, int x, int y) -> void {
+	container.onHover = [](void* m, int x, int y) -> void {
 		engine::gui::GuiManager* manager = ((engine::gui::GuiManager*)m);
 
 		bool hover = x <= 300 + WIDTH && x > 100 + WIDTH && y >= 720 - HEIGHT - 200 && y < 720 - HEIGHT;
@@ -80,8 +80,8 @@ void AutoClickerGL::loop() {
 			manager->setColour(1, glm::vec4(1.0f, 0.f, 0.f, 1.0f));
 		}
 
-		if (testColour2 != 1.0f && hover2) {
-			manager->setColour(0, glm::vec4(0.0f, 0.f, 1.f, 1.0f));
+		if (testColour2 != 0.0f && hover2) {
+			manager->setColour(0, glm::vec4(0.0f, 0.f, 1.0f, 1.0f));
 		}
 
 		if (testColour == 1.0f && !hover) {
@@ -90,6 +90,12 @@ void AutoClickerGL::loop() {
 
 		if (testColour2 == 0.0f && !hover2) {
 			manager->setColour(0, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		}
+	};
+	container.onLeftClick = [](void* m, int x, int y) {
+		bool hover = x <= 300 + WIDTH && x > 100 + WIDTH && y >= 720 - HEIGHT - 200 && y < 720 - HEIGHT;
+		if (hover) {
+			glfwSetWindowShouldClose(glfwGetCurrentContext(), 1);
 		}
 	};
 	container.position = glm::vec3(WIDTH, HEIGHT, 0.f);
@@ -117,7 +123,6 @@ void AutoClickerGL::loop() {
 	guiManager.setDrawIndexs();
 	guiManager.setRendererData();
 	//
-
 
 	glm::mat4 orthoMatrix = glm::ortho(0.f, 1280.f, 0.f, 720.f, 0.1f, 100.f);
 
@@ -147,16 +152,19 @@ void AutoClickerGL::loop() {
 		if (autoClicker::onMedTickTime(tick.medTickTime)) {
 			double x = 0, y = 0;
 			glfwGetCursorPos(window, &x, &y);
+
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+				guiManager.updateContainersRightClick(x, y);
+
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+				guiManager.updateContainersLeftClick(x, y);
+
 			if (px != x || py != y) {
-				guiManager.updateContainers(x, y);
+				guiManager.updateContainersMove(x, y);
 				px = x;
 				py = y;
 			}
 
-			if (x <= 300 + WIDTH && x > 100 + WIDTH && y >= 720 - HEIGHT - 200 && y < 720 - HEIGHT) {
-				if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
-					glfwSetWindowShouldClose(window, 1);
-			}
 		}
 		if (autoClicker::onFastTickTime(tick.fastTickTime)) { }
 

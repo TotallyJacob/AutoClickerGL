@@ -28,7 +28,9 @@ namespace engine::gui {
 
 	struct GuiContainer {
 
-		void (*onUpdate)(void* manager, int x, int y);
+		void (*onHover)(void* manager, int x, int y) = nullptr;
+		void (*onRightClick)(void* manager, int x, int y) = nullptr;
+		void (*onLeftClick)(void* manager, int x, int y) = nullptr;
 
 		bool update = false;
 		float depth = 0;

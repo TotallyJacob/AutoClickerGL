@@ -7,6 +7,11 @@
 #include"GuiRenderer.h"
 #include"Gui.hpp"
 
+//My defines
+#define GUI_HOVER 0
+#define GUI_RIGHT_CLICK 1
+#define GUI_LEFT_CLICK 2
+
 
 namespace engine::gui {
 
@@ -45,7 +50,9 @@ namespace engine::gui {
 		DefaultElementData defaultElementData;
 		DefaultContainerData defaultContainerData;
 		std::vector<unsigned int> defaultInstancesPerGeometry;
-		std::vector<void (*)(void* manager, int x, int y)> defaultContainerUpdate;
+		std::vector<void (*)(void* manager, int x, int y)> containerHoverUpdate;
+		std::vector<void (*)(void* manager, int x, int y)> containerRightClickUpdate;
+		std::vector<void (*)(void* manager, int x, int y)> containerLeftClickUpdate;
 
 	public:
 
@@ -56,7 +63,6 @@ namespace engine::gui {
 		inline void setGeometryDataIds(unsigned int num_geometry) {
 			defaultInstancesPerGeometry.resize(num_geometry);
 		}
-
 		inline void addGuiContainer(GuiContainer& guiContainer) {
 
 			using std::chrono::duration_cast;
@@ -82,8 +88,14 @@ namespace engine::gui {
 			containerData.range.push_back(range); //How many elements currently added to the arrays
 			//
 
-			if(guiContainer.update)
-				defaultContainerUpdate.push_back(guiContainer.onUpdate);
+			if(guiContainer.onHover != nullptr)
+				containerHoverUpdate.push_back(guiContainer.onHover);
+
+			if (guiContainer.onRightClick != nullptr)
+				containerRightClickUpdate.push_back(guiContainer.onRightClick);
+
+			if (guiContainer.onLeftClick != nullptr)
+				containerLeftClickUpdate.push_back(guiContainer.onLeftClick);
 			
 			auto& depth = defaultElementData.depth;
 			depth.resize(depth.size() + guiContainer.depths.size());
@@ -141,6 +153,11 @@ namespace engine::gui {
 				i++;
 			}
 
+			//Remove all of this stuff
+			defaultElementData.colour.resize(0);
+			defaultElementData.modelMatrices.resize(0);
+			defaultElementData.depth.resize(0);
+			defaultElementData.drawIndex.resize(0);
 		}
 
 		// @TODO temp stuff
@@ -149,14 +166,23 @@ namespace engine::gui {
 		}
 
 		inline void setColour(unsigned int elementId, glm::vec4 colour) {
-			guiRenderer->updateColours(&colour[0], num_default_elements, elementId * 4);
+			guiRenderer->updateColours(&colour[0], 1, elementId * 4);
 		}
 
-		inline void updateContainers(unsigned int mouseX, unsigned int mouseY) {
-			for (auto function : defaultContainerUpdate) {
+		inline void updateContainersMove(unsigned int mouseX, unsigned int mouseY) {
+			for (auto function : containerHoverUpdate) {
 				function(this, mouseX, mouseY);
 			}
-
+		}
+		inline void updateContainersRightClick(unsigned int mouseX, unsigned int mouseY) {
+			for (auto function : containerRightClickUpdate) {
+				function(this, mouseX, mouseY);
+			}
+		}
+		inline void updateContainersLeftClick(unsigned int mouseX, unsigned int mouseY) {
+			for (auto function : containerLeftClickUpdate) {
+				function(this, mouseX, mouseY);
+			}
 		}
 
 	};

@@ -33,7 +33,7 @@ void GuiGeometryWriter::writeTexGeometry(GuiGeometryParser& guiGeometryParser, c
 
 	if (verts.size() == 0 || geometryData.size() == 0) {
 
-		std::cout << "No geometry" << std::endl;
+		std::cout << "No Textured geometry" << std::endl;
 		return;
 	}
 
@@ -46,7 +46,7 @@ void GuiGeometryWriter::writeDefaultGeometry(GuiGeometryParser& guiGeometryParse
 
 	if (verts.size() == 0 || geometryData.size() == 0) {
 
-		std::cout << "No texture geometry" << std::endl;
+		std::cout << "No geometry" << std::endl;
 		return;
 	}
 	writeGeometry(verts, geometryData, guiGeometryPath, util::guiSpecialQualifier);

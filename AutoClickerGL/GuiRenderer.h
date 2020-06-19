@@ -1,3 +1,5 @@
+#pragma once
+
 //dependencies
 #include"GL/glew.h"
 #include"GLM/glm.hpp"
@@ -7,6 +9,7 @@
 //My imports
 #include"ShaderProgram.h"
 #include"GuiGeometryManager.h"
+#include"GuiRendererUtil.h"
 
 //SSBO BINDINGS
 #define GUI_DRAWINDEX_BINDING 0
@@ -26,69 +29,31 @@
 #define GUI_DEPTH_NAME "gui_depth"
 #define GUI_COLOUR_NAME "gui_colour"
 
-#pragma once
-
 namespace engine::gui {
 
 	class GuiRenderer
 	{
 	private:
 
-		struct Indirect {
-			unsigned int count = 0;
-			unsigned int instanceCount = 0;
-			unsigned int first = 0;
-			unsigned int baseInstance = 0;
-		};
-		struct Renderable {
-
-			unsigned int vao = 0;
-			unsigned int indirectBuffer = 0;
-			unsigned int drawCount = 0;
-
-		};
-		struct SSBOData {
-			unsigned int ssbo = 0;
-			void* persistentMap = 0;
-		};
-
-		constexpr static unsigned int persistent_map_flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 		unsigned int defaultProgram = 0;
-		Indirect* indirectPersistentMap = nullptr;
-
-		SSBOData defaultSSBOS[4] = {
-			SSBOData{0, nullptr}, //Draw Index
-			SSBOData{0, nullptr}, //Model Matrices
-			SSBOData{0, nullptr}, //Depth
-			SSBOData{0, nullptr}  //colour
+		util::Indirect* indirectPersistentMap = nullptr;
+		util::SSBOData defaultSSBOS[4] = {
+			util::SSBOData{0, nullptr}, //Draw Index
+			util::SSBOData{0, nullptr}, //Model Matrices
+			util::SSBOData{0, nullptr}, //Depth
+			util::SSBOData{0, nullptr}  //colour
 		};
-		Renderable renderable = {};
+		util::Renderable renderable = {};
 
 		//Default init
 		inline void initDefaultShader();
 		inline void genDefaultSSBOs();
 		inline void bindDefaultSSBOsToShader();
 
-		//Util
-		template<typename T>
-		inline const void allocateSSBOSpace(unsigned int num_elements, const GLenum target = GL_SHADER_STORAGE_BUFFER, const void* initialData = NULL) const {
-			glBufferStorage(target, sizeof(T) * num_elements, initialData, persistent_map_flags);
-		}
-
-		template<typename T>
-		[[nodiscard]] inline void* genSSBOPersistentMap(unsigned int num_elements, const GLenum target = GL_SHADER_STORAGE_BUFFER) const {
-			return glMapBufferRange(target, 0, sizeof(T) * num_elements, persistent_map_flags);
-		}
-		
 		template<typename ARRAY_TYPE, typename SIZE>
 		inline void updateSSBO(unsigned int ssboId, void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint) {
 			ARRAY_TYPE* persistentMap = (ARRAY_TYPE*)defaultSSBOS[ssboId].persistentMap;
-			updatePersistentMap<ARRAY_TYPE, SIZE>(persistentMap, ssboData, numDataToCpy, persistentMapStartPoint);
-		}
-
-		template<typename ARRAY_TYPE, typename SIZE>
-		inline void updatePersistentMap(ARRAY_TYPE *persistentMap, void* ssboData, const unsigned int numDataToCpy, const unsigned int persistentMapStartPoint) {
-			memcpy(&persistentMap[persistentMapStartPoint], ssboData, sizeof(SIZE) * numDataToCpy);
+			util::updatePersistentMap<ARRAY_TYPE, SIZE>(persistentMap, ssboData, numDataToCpy, persistentMapStartPoint);
 		}
 
 		//Default

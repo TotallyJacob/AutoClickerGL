@@ -1,3 +1,5 @@
+#pragma once
+
 #include<iostream>
 #include<string>
 #include<filesystem>
@@ -5,11 +7,34 @@
 #include<locale>
 #include<sstream>
 
-#pragma once
-
 // @TODO manage all the inlines -> maybe source
 
 namespace gui::util {
+
+	struct GeometryData {
+		unsigned int num_verts = 0;
+		unsigned int floatsFromStartOfGeometry = 0;
+		std::string geometryName;
+	};
+
+	struct GuiGeometry {
+		std::vector<float> verts = std::vector<float>(0);
+		std::vector<GeometryData> geometryData = std::vector<GeometryData>(0);
+	};
+
+
+	//Data
+	constexpr static char guiTexQualifier = 't';
+	constexpr static const char* guiTexSpecialQualifier = "Tex";
+	constexpr static const char* guiTexIdentifier = "guiTexGeo.";
+	constexpr static unsigned int guiTexIdentifierLength = 10;
+
+	constexpr static char guiQualifier = 'n';
+	constexpr static const char* guiSpecialQualifier = "";
+	constexpr static const char* guiIdentifier = "guiGeo.";
+	constexpr static unsigned int guiIdentifierLength = 7;
+
+	constexpr static const char* path = "C:\\Users\\Jacob\\source\\repos\\AutoClickerGL\\AutoClickerGL";
 
 	//Misc
 	inline size_t split(const std::string& txt, std::vector<std::string>& strs, char ch)

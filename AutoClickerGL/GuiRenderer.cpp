@@ -33,23 +33,23 @@ void GuiRenderer::render(float *projectionMatrix){
 void GuiRenderer::allocateDefaultSSBOMemory(unsigned int num_default_elements) {
 	//Allocate drawIndex
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, defaultSSBOS[GUI_DRAWINDEX_ID].ssbo);
-	allocateSSBOSpace<unsigned int>(num_default_elements);
-	defaultSSBOS[GUI_DRAWINDEX_ID].persistentMap = genSSBOPersistentMap<unsigned int>(num_default_elements);
+	util::allocateSSBOSpace<unsigned int>(num_default_elements);
+	defaultSSBOS[GUI_DRAWINDEX_ID].persistentMap = util::genSSBOPersistentMap<unsigned int>(num_default_elements);
 
 	//Allocate modelMatrix
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, defaultSSBOS[GUI_MODELMATRIX_ID].ssbo);
-	allocateSSBOSpace<glm::mat4>(num_default_elements);
-	defaultSSBOS[GUI_MODELMATRIX_ID].persistentMap = genSSBOPersistentMap<glm::mat4>(num_default_elements);
+	util::allocateSSBOSpace<glm::mat4>(num_default_elements);
+	defaultSSBOS[GUI_MODELMATRIX_ID].persistentMap = util::genSSBOPersistentMap<glm::mat4>(num_default_elements);
 
 	//Allocate depth
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, defaultSSBOS[GUI_DEPTH_ID].ssbo);
-	allocateSSBOSpace<float>(num_default_elements);
-	defaultSSBOS[GUI_DEPTH_ID].persistentMap = genSSBOPersistentMap<float>(num_default_elements);
+	util::allocateSSBOSpace<float>(num_default_elements);
+	defaultSSBOS[GUI_DEPTH_ID].persistentMap = util::genSSBOPersistentMap<float>(num_default_elements);
 
 	//Allocate Colour
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, defaultSSBOS[GUI_COLOUR_ID].ssbo);
-	allocateSSBOSpace<glm::vec4>(num_default_elements);
-	defaultSSBOS[GUI_COLOUR_ID].persistentMap = genSSBOPersistentMap<glm::vec4>(num_default_elements);
+	util::allocateSSBOSpace<glm::vec4>(num_default_elements);
+	defaultSSBOS[GUI_COLOUR_ID].persistentMap = util::genSSBOPersistentMap<glm::vec4>(num_default_elements);
 
 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -116,7 +116,9 @@ void GuiRenderer::genIndirectBuffer(GuiGeometryManager::GeometryInfoData* geomet
 
 	renderable.drawCount = geometryInfoDataSize;
 
+	using Indirect = util::Indirect;
 	Indirect* indirect = new Indirect[geometryInfoDataSize];
+
 	for (int i = 0; i < geometryInfoDataSize; i++) {
 
 		GuiGeometryManager::GeometryInfoData infoData = geometryInfoData[i];
@@ -127,8 +129,8 @@ void GuiRenderer::genIndirectBuffer(GuiGeometryManager::GeometryInfoData* geomet
 		indirect[i].baseInstance = 0; //No idea
 	}
 
-	allocateSSBOSpace<Indirect>(geometryInfoDataSize, GL_DRAW_INDIRECT_BUFFER, &indirect[0]);
-	this->indirectPersistentMap = (Indirect*)genSSBOPersistentMap<Indirect>(geometryInfoDataSize, GL_DRAW_INDIRECT_BUFFER);
+	util::allocateSSBOSpace<Indirect>(geometryInfoDataSize, GL_DRAW_INDIRECT_BUFFER, &indirect[0]);
+	this->indirectPersistentMap = (Indirect*)util::genSSBOPersistentMap<Indirect>(geometryInfoDataSize, GL_DRAW_INDIRECT_BUFFER);
 
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 
@@ -137,7 +139,8 @@ void GuiRenderer::genIndirectBuffer(GuiGeometryManager::GeometryInfoData* geomet
 
 //Updating buffers
 void GuiRenderer::updateIndirectBuffer(void* data, unsigned int numIndirectBuffer, unsigned int persistentMapStartPoint) {
-	updatePersistentMap<Indirect, Indirect>(indirectPersistentMap, data, numIndirectBuffer, persistentMapStartPoint);
+	using Indirect = util::Indirect;
+	util::updatePersistentMap<Indirect, Indirect>(indirectPersistentMap, data, numIndirectBuffer, persistentMapStartPoint);
 }
 void GuiRenderer::updateDrawIndexs(void* ssboData, unsigned int numDataToCpy, unsigned int persistentMapStartPoint) {
 	updateSSBO<unsigned int, unsigned int>(GUI_DRAWINDEX_ID, ssboData, numDataToCpy, persistentMapStartPoint);

@@ -3,7 +3,7 @@
 
 //My imports
 #include"GuiUtil.hpp"
-#include"GuiGeometryWriter.h"
+#include"GuiGeometryReader.h"
 
 #pragma once
 
@@ -13,17 +13,36 @@ namespace gui {
 	{
 	private:
 
-		float* vertexData;
-		unsigned int vertexDataLength = 0;
+		util::GuiGeometry defaultGeometry;
+		util::GuiGeometry textureGeometry;
 
-		GuiGeometryWriter* guiGeometryWriter;
+		using SplitLine = std::vector<std::string>;
+		void parse(std::vector<SplitLine> &splitLine, std::vector<std::string>& geometryFileNames);
 
 	public:
 
-		GuiGeometryParser(GuiGeometryWriter *guiGeometryWriter);
+		GuiGeometryParser();
 		~GuiGeometryParser() = default;
 
-		void parseGeometry(std::vector<char>& geometry, std::vector<std::string>& geometryFileNames);
+		void parseGeometry(GuiGeometryReader &guiGeometryReader);
+
+		//Getters
+		std::vector<float>& getDefaultVertices() {
+			return defaultGeometry.verts;
+		}
+
+		std::vector<util::GeometryData>& getDefaultGeometryData() {
+			return defaultGeometry.geometryData;
+		}
+
+		std::vector<float>& getTextureVertices() {
+			return textureGeometry.verts;
+		}
+
+		std::vector<util::GeometryData>& getTextureGeometryData() {
+			return textureGeometry.geometryData;
+		}
+
 	};
 
 };

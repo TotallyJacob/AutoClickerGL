@@ -1,10 +1,11 @@
+#pragma once
+
 #include<iostream>
 #include<vector>
 
 //My imports
 #include"GuiUtil.hpp"
-
-#pragma once
+#include"GuiGeometryParser.h"
 
 namespace gui {
 
@@ -12,27 +13,32 @@ namespace gui {
 	{
 
 	private:
-		struct GeometryData;
 
-		constexpr static const char* guiGeometryPath = "C:\\Users\\Jacob\\source\\repos\\AutoClickerGL\\AutoClickerGL\\GuiGeometry.hpp";
-
-		inline void setGeometryInfoDataStruct(std::stringstream &ss) const noexcept {
-			ss << "struct GeometryInfo {\n";
+		inline void setGeometryInfoDataStruct(std::stringstream &ss, const char * specialQualifier) const noexcept {
+			ss << "struct ";
+			ss << specialQualifier;
+			ss<< "GeometryInfo {\n";
 			ss << "    unsigned int num_verts;\n";
 			ss << "    unsigned int floatsToStartOfGeometry;\n";
 			ss << "    const char *geometryName;\n";
 			ss << "};\n";
 		}
-		inline void setGeometryInfoDataSize(std::stringstream& ss, unsigned int size) const {
-			ss << "constexpr unsigned int geometryInfoSize = ";
+		inline void setGeometryInfoDataSize(std::stringstream& ss, unsigned int size, const char* specialQualifier) const {
+			ss << "constexpr unsigned int ";
+			ss << specialQualifier;
+			ss << "geometryInfoSize = ";
 			ss << size;
 			ss << ";\n";
 		}
-		inline void setGeometryInfoDataArray(std::stringstream& ss, std::vector<GeometryData>& geometryData) {
-			ss << "GeometryInfo geometryInfo[geometryInfoSize] = {\n";
+		inline void setGeometryInfoDataArray(std::stringstream& ss, std::vector<util::GeometryData>& geometryData, const char* specialQualifier) {
+			ss << "GeometryInfo ";
+			ss << specialQualifier;
+			ss << "geometryInfo[";
+			ss << specialQualifier;
+			ss<< "geometryInfoSize] = { \n";
 			for (int i = 0; i < geometryData.size(); i++) {
 
-				GeometryData d = geometryData.at(i);
+				util::GeometryData d = geometryData.at(i);
 
 				ss << "GeometryInfo{";
 				ss << d.num_verts;
@@ -54,13 +60,19 @@ namespace gui {
 			ss << "};\n";
 		}
 
-		inline void setGeometryVertexDataSize(std::stringstream& ss, unsigned int size) const {
-			ss << "constexpr unsigned int vertexDataSize = ";
+		inline void setGeometryVertexDataSize(std::stringstream& ss, unsigned int size, const char* specialQualifier) const {
+			ss << "constexpr unsigned int ";
+			ss << specialQualifier;
+			ss<< "vertexDataSize = ";
 			ss << size;
 			ss << ";\n";
 		}
-		inline void setGeometryVertexArray(std::stringstream& ss, std::vector<float> &verts) {
-			ss << "float vertData[vertexDataSize] {";
+		inline void setGeometryVertexArray(std::stringstream& ss, std::vector<float> &verts, const char* specialQualifier) {
+			ss << "float ";
+			ss << specialQualifier;
+			ss << "vertData[";
+			ss << specialQualifier;
+			ss << "vertexDataSize]{ ";
 			for (int i = 0; i < verts.size(); i++) {
 				ss << verts.at(i);
 
@@ -75,18 +87,15 @@ namespace gui {
 			ss << "\n";
 		}
 
-	public:
+		void writeGeometry(std::vector<float>& verts, std::vector<util::GeometryData>& geometryData, const char* guiGeometryPath, const char* guiSpecialQualifier);
 
-		struct GeometryData {
-			unsigned int num_verts = 0;
-			unsigned int floatsFromStartOfGeometry = 0;
-			std::string geometryName;
-		};
+	public:
 
 		GuiGeometryWriter() = default;
 		~GuiGeometryWriter() = default;
 
-		void writeGeometry(std::vector<float>& geometry, std::vector<GeometryData>& geometryData);
+		void writeTexGeometry(GuiGeometryParser& guiGeometryParser, const char* guiTexGeometryPath);
+		void writeDefaultGeometry(GuiGeometryParser& guiGeometryParser, const char* guiGeometryPath);
 	};
 
 };

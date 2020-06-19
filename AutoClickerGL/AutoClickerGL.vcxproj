@@ -184,12 +184,15 @@
     <ClCompile Include="GuiRenderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="YAMLFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Config.yml" />
     <None Include="gui.frag.shader" />
     <None Include="gui.vert.shader" />
+    <None Include="guiTex.frag.shader" />
+    <None Include="guiTex.vert.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoClickerGL.h" />
@@ -198,29 +201,27 @@
     <ClInclude Include="GuiGeometryManager.h" />
     <ClInclude Include="GuiManager.h" />
     <ClInclude Include="GuiRenderer.h" />
+    <ClInclude Include="GuiRendererUtil.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="stb.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="YAML.hpp" />
     <ClInclude Include="YAMLFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  
   <ItemGroup>
-      <ProjectToBuild Include="$(SolutionDir)PrecompileProgram\PrecompileProgram.vcxproj">
+    <ProjectToBuild Include="$(SolutionDir)PrecompileProgram\PrecompileProgram.vcxproj">
       <Properties>Configuration=$(Configuration)</Properties>
     </ProjectToBuild>
-
     <Binaries Include="*.dll;*.exe" />
-	
   </ItemGroup>
-  
   <Target Name="PreBuildEvent">
-		<Message Text="#### Building PrecompileProgram ####" Importance="high" />
-		<MSBuild Projects="@(ProjectToBuild)" />
-		<Message Text="#### Running PrecompileProgram ####" Importance="high" />
-		<Exec Command="$(SolutionDir)x64/Debug/PrecompileProgram.exe  %(Binaries.Identity)" />
-		<Message Text="#### Finished Running PrecompileProgram ####" Importance="high" />
+    <Message Text="#### Building PrecompileProgram ####" Importance="high" />
+    <MSBuild Projects="@(ProjectToBuild)" />
+    <Message Text="#### Running PrecompileProgram ####" Importance="high" />
+    <Exec Command="$(SolutionDir)x64/Debug/PrecompileProgram.exe  %(Binaries.Identity)" />
+    <Message Text="#### Finished Running PrecompileProgram ####" Importance="high" />
   </Target>
-  
 </Project>

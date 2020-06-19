@@ -1,3 +1,5 @@
+#pragma once
+
 #include<iostream>
 #include<string>
 #include<filesystem>
@@ -7,9 +9,6 @@
 
 //My imports
 #include"GuiUtil.hpp"
-#include"GuiGeometryParser.h"
-
-#pragma once
 
 namespace gui {
 
@@ -17,17 +16,13 @@ namespace gui {
 	{
 	private:
 
-		// @TODO handle this properly
-		constexpr static const char* guiIdentifier = "guiGeo.";
-		constexpr static unsigned int guiIdentifierLength = 7;
-		constexpr static const char* path = "C:\\Users\\Jacob\\source\\repos\\AutoClickerGL\\AutoClickerGL";
 		const char* guiGeometryFile;
 
 		std::vector<char> geometryFileData;
 		std::vector<std::string> geometryFileNames;
 
 
-		inline static void readGuiGeometryData(std::wstring filePath, std::vector<char>& data, unsigned int geometryIndex) {
+		inline static void readGuiGeometryData(std::wstring filePath, std::vector<char>& data, char qualifier) {
 			std::ifstream file(filePath, std::ios::binary);
 			std::streambuf* raw_buffer = file.rdbuf();
 
@@ -73,14 +68,25 @@ namespace gui {
 
 			data.push_back('\n');
 			data.push_back('#');
+			data.push_back(qualifier);
 			data.push_back('\n');
 		}
-		void readGuiGeometryFiles();
 
 	public:
 
-		GuiGeometryReader(const char *guiGeometryFile, GuiGeometryParser &guiGeometryParser);
+		GuiGeometryReader(const char *guiGeometryFile);
 		~GuiGeometryReader() = default;
+
+		void readGuiGeometryFiles();
+
+		//Getters
+		std::vector<char>& getGeometryFileData() {
+			return geometryFileData;
+		}
+
+		std::vector<std::string>& getGeometryFileNames() {
+			return geometryFileNames;
+		}
 
 	};
 
